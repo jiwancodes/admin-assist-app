@@ -18,15 +18,15 @@ const functions={
         }
        
     },
-    getAllUserDetails:async(req,res)=>{
+    getAllUserDetailsOfNpstocks:async(req,res)=>{
         try {
             console.log("Entered user details try")
-            const getQuery = "SELECT idlogin,username,phone,expiry_date FROM login;"
+            const getQuery = "SELECT username,phone,expiry_date FROM login;"
             const [rows, fields] = await connection.query(getQuery);
             console.log(rows[0]);
             res.json({
                 "success":true,
-                "msg":"successfully fetched",
+                "msg":"successfully fetched user details of npstock",
                 "rows":JSON.stringify(rows),
             })
         }
@@ -38,8 +38,48 @@ const functions={
             })
             console.error(err);
         }
-
-
-    }  
+    }  ,
+    getAllUserDetailsOfSystemxlite:async(req,res)=>{
+        try {
+            console.log("Entered user details try")
+            const getQuery = "SELECT username,phone,expiry_date FROM loginsystemxlt;"
+            const [rows, fields] = await connection.query(getQuery);
+            console.log(rows[0]);
+            res.json({
+                "success":true,
+                "msg":"successfully fetched user details of Systemxlite",
+                "rows":JSON.stringify(rows),
+            })
+        }
+        catch (err) {
+            console.log("error occured");
+            res.json({
+                "success":false,
+                "msg":"failed to fetch",
+            })
+            console.error(err);
+        }
+    },
+    search:async(req,res)=>{
+        try {
+            console.log("Entered user search try")
+            const getQuery = `SELECT username,phone,expiry_date FROM ${req.body.database} where username like='?%';`
+            const [rows, fields] = await connection.query(getQuery,[req.body.value]);
+            console.log(rows[0]);
+            res.json({
+                "success":true,
+                "msg":"successfully fetched user details of Systemxlite",
+                "rows":JSON.stringify(rows),
+            })
+        }
+        catch (err) {
+            console.log("error occured");
+            res.json({
+                "success":false,
+                "msg":"failed to fetch",
+            })
+            console.error(err);
+        }
+    }
 }
 module.exports=functions;

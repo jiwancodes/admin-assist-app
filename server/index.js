@@ -13,7 +13,10 @@ actions.connectDatabase();
 app.get('/',(req,res)=>{
     res.send("hello world");
 })
-app.get('/user/details',actions.getAllUserDetails)
+app.get('/user/details/npstocks',actions.getAllUserDetailsOfNpstocks)
+app.get('/user/details/systemxlite',actions.getAllUserDetailsOfSystemxlite)
+app.post('user/search',actions.search)
+
 if(process.env.NODE_ENV==='development'){
    app.use( morgan('dev'))  
 }

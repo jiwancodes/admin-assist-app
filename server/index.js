@@ -13,11 +13,9 @@ actions.connectDatabase();
 app.get('/',(req,res)=>{
     res.send("hello world");
 })
-app.get('/getdata',actions.getData);
-
-app.post('/addshare',actions.addshare);
+app.get('/user/details',actions.getAllUserDetails)
 if(process.env.NODE_ENV==='development'){
    app.use( morgan('dev'))  
 }
-const PORT = process.env.PORT||6000;
+const PORT = process.env.PORT||5000;
 app.listen(PORT,console.log(`server running in port ${PORT} in ${process.env.NODE_ENV} mode`))

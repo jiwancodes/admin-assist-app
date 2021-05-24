@@ -6,10 +6,10 @@ const functions={
     connectDatabase: async ()=>{
         try{
         connection= await mysql.createConnection(dbConfig.config); 
-            var testQuery ="SELECT * FROM income_table;"
+            var testQuery ="SELECT * FROM login;"
             var [rows,fields]= await connection.query(testQuery);
             console.log("successfully connected");
-            console.log(rows);
+            console.log(rows[0]);
 
         }
         catch(err){
@@ -18,12 +18,12 @@ const functions={
         }
        
     },
-    getData:async(req,res)=>{
+    getAllUserDetails:async(req,res)=>{
         try {
-            console.log("Entered try")
-            const getQuery = "SELECT * FROM income_table;"
+            console.log("Entered user details try")
+            const getQuery = "SELECT idlogin,username,phone,expiry_date FROM login;"
             const [rows, fields] = await connection.query(getQuery);
-            console.log(rows);
+            console.log(rows[0]);
             res.json({
                 "success":true,
                 "msg":"successfully fetched",

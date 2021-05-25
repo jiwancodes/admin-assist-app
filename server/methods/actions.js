@@ -21,7 +21,7 @@ const functions={
     getAllUserDetailsOfNpstocks:async(req,res)=>{
         try {
             console.log("Entered user details try")
-            const getQuery = "SELECT username,phone,expiry_date FROM login;"
+            const getQuery = "SELECT username,phone, Date_Format(login.expiry_date,'%m/%d/%Y')as expiry_date FROM login;"
             const [rows, fields] = await connection.query(getQuery);
             console.log(rows[0]);
             res.json({
@@ -42,7 +42,7 @@ const functions={
     getAllUserDetailsOfSystemxlite:async(req,res)=>{
         try {
             console.log("Entered user details try")
-            const getQuery = "SELECT username,phone,expiry_date FROM loginsystemxlt;"
+            const getQuery = "SELECT username,phone,Date_Format(loginsystemxlt.expiry_date,'%m/%d/%Y')as expiry_date FROM loginsystemxlt;"
             const [rows, fields] = await connection.query(getQuery);
             console.log(rows[0]);
             res.json({

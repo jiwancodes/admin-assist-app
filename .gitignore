@@ -5,6 +5,9 @@
 /package_lock.json
 /server/config
 /server/config/config.js
+/client/db-admin-assist/node_modules
+/client/db-admin-assist/public
+/client/db-admin-assist/package_lock
 
 
 # dependencies

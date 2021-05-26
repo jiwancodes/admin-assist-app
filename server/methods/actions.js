@@ -81,7 +81,7 @@ const functions = {
             console.log(rows);
             res.json({
                 "success": true,
-                "msg": "successfully fetched user details of Systemxlite",
+                "msg": "Expiry date successfully extended",
                 "rows": JSON.stringify(rows),
                 "fields":fields
             })
@@ -93,7 +93,7 @@ const functions = {
             console.log("error occured");
             res.json({
                 "success": false,
-                "msg": "failed to extend",
+                "msg": "Error!! failed to extend expiry date",
             })
             console.error(err);
         }

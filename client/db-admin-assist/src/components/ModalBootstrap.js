@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
-import axios from 'axios'
+import axios from 'axios';
+import Alert from './Alert';
 
 
 const customStyles = {
@@ -21,8 +22,9 @@ export default function ModalBootstrap(props){
   var subtitle;
   const [modalIsOpen,setIsOpen] = React.useState(false);
   const [extensionOption,setextensionOption] = React.useState("fiveDays");
-  // const [dataRow,setDataRow] = React.useState(props.row);
-  // const [date,setDate] = React.useState(props.row.expiry_date);
+  const [showAlert, setshowAlert] = React.useState(false);
+  const [response, setresponse] = React.useState("");
+
 
   function openModal() {
     console.log("here is row in modal");
@@ -54,11 +56,19 @@ export default function ModalBootstrap(props){
     };
     axios.post('http://localhost:5000/user/expdate/add',payload).then((response)=>{
       console.log(response.data);
+      setresponse(response.data);
+      setshowAlert(true);
 
     }).catch((e)=>{
       console.log(e)
+      setshowAlert(true);
     });
 
+  }
+  const renderAlert = () => {
+    if (showAlert) {
+      return <Alert success={response.success} msg={response.msg} onModalSubmit={onModalSubmit}/>
+    }
   }
 
 
@@ -86,7 +96,7 @@ export default function ModalBootstrap(props){
           </select></div>
           <div style={{display:'flex',justifyContent:"flex-end"}}><button  onClick={onModalSubmit}>Commit</button></div>
           </form>
-
+         {renderAlert}
           
         </Modal>
       </div>

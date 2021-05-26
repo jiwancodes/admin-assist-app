@@ -7,7 +7,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import ModalBootstrap from './ModalBootstrap'
+// import ModalBootstrap from './ModalBootstrap'
+import BootstrapModal from './BootstrapModal';
 
 
 const useStyles = makeStyles({
@@ -23,15 +24,6 @@ export default function BasicTable(props) {
   const rows = props.rows;
   console.log(rows);
 
-  // const extendExpDateButtonClickHandler = (event) => {
-  //   event.preventDefault();
-  //   console.log(event.target.value)
-  //   const row=event.target.value;
-  //   console.log("clicked");
-  //   console.log(row);
-  //   props.setAlert(true);
-  //   props.setupdateUser(row);
-  // }
 
   return (
     <TableContainer component={Paper}>
@@ -52,7 +44,7 @@ export default function BasicTable(props) {
               <TableCell align="center" >{row.username}</TableCell>
               <TableCell align="center">{row.phone}</TableCell>
               <TableCell align="center">{row.expiry_date}</TableCell>
-              <TableCell align="center"><ModalBootstrap row={row} database={props.database} onModalSubmit={props.onModalSubmit}/></TableCell>
+              <TableCell align="center"><BootstrapModal row={row} database={props.database} onModalSubmit={props.onModalSubmit}/></TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -2,8 +2,11 @@ const mysql = require('mysql2/promise');
 const dbConfig = require('../config/db_config');
 const moment = require('moment');
 
+//this connection is global database connection variable for this page
 var connection
+
 const functions = {
+    //establish initial connection with database and a test query
     connectDatabase: async () => {
         try {
             connection = await mysql.createConnection(dbConfig.config);
@@ -17,6 +20,7 @@ const functions = {
         }
 
     },
+    //Api callback function to fetch required data from table login
     getAllUserDetailsOfNpstocks: async (req, res) => {
         try {
             console.log("Entered Npstock api")
@@ -37,6 +41,7 @@ const functions = {
             console.error(err);
         }
     },
+    //Api callback function to fetch required data from table loginsystemxlite
     getAllUserDetailsOfSystemxlite: async (req, res) => {
         try {
             console.log("Entered systemxlite api")
@@ -57,6 +62,7 @@ const functions = {
             console.error(err);
         }
     },
+    //Api callback function to update expiry date based on various constraints
     addExpiryDate: async (req, res) => {
         try {
             console.log(req.body);

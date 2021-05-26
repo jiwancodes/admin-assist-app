@@ -1,14 +1,14 @@
 import React from 'react'
 import Home from './Home'
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 function App() {
   return (
+     /* opening landing page only on /manualupdate path  */
     <Router>
       <div className="App">
         <Route path='/manualupdate' component={Home}/>
       </div>
-
     </Router>
   )
 }

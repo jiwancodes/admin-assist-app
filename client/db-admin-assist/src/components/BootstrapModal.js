@@ -79,8 +79,8 @@ function BootstrapModal(props) {
                 <button onClick={closeModal}>close</button>
                 </Modal.Header>
                 <Modal.Body>
-                        <h2 style={{ margin: 1, padding: 2 ,color: "red"}}>Alert</h2>
-                        <h4 style={{ margin: 1, padding: 2,color: "red" }}>This may alter the database. So be sure before commiting to change.</h4>
+                        <h2 style={{ margin: 1, padding: 2 ,color: "red"}}>Warning!!</h2>
+                        <h4 style={{ margin: 1, padding: 2,color:"f00000" }}>This may alter the database. So be sure before commiting to change.</h4>
                     <div style={{ margin: 5, padding: 2 ,display: 'flex', justifyContent: "flex-end" }}>Extend expiry date of user by:
                          <select value={extensionOption} onChange={onExtensionOptionChangeHandler}>
                             <option value="fiveDays">5 days</option>

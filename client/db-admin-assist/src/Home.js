@@ -8,6 +8,8 @@ function Home() {
   const [searchValue, setsearchValue] = useState("");
   const [userDetails, setuserDetails] = useState("");
   const [chooseDatabase, setchooseDatabase] = useState("npstock");
+
+//fetches data for npstock users just once after initial render  
   useEffect(() => {
     axios.get("http://localhost:5000/user/details/npstock").then((response) => {
       console.log("here is response message",response.data.msg);
@@ -20,6 +22,7 @@ function Home() {
 
   }, [])
 
+  //switches tables based on option for fetching users of npstock and systemxlite
   const fetchAllDataByOption = (option) => {
     console.log("fetche data called");
     axios.get(`http://localhost:5000/user/details/${option}`).then((response) => {
@@ -31,6 +34,7 @@ function Home() {
     })
   }
 
+  //handles option switch
   const onOptionChangeHandler = (event) => {
     console.log("onchangeHandler called");
     event.preventDefault();
@@ -38,6 +42,7 @@ function Home() {
     fetchAllDataByOption(event.target.value);
   }
 
+  //table search based on username and phone number
   const requestSearch = (searchedVal) => {
     const filteredRows = userDetails.filter((row) => {
       return row.username.toLowerCase().includes(searchedVal.toLowerCase()) || row.phone.includes(searchedVal);
@@ -45,11 +50,13 @@ function Home() {
     setuserDetails(filteredRows);
   };
 
+  //handles search cancelation
   const cancelSearch = () => {
     setsearchValue("");
     fetchAllDataByOption(chooseDatabase);
   }
 
+  //handles optional rendering of table i.e renders table only if data is present
   const renderTable = () => {
     if (showTable) {
       return <BasicTable rows={userDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption}/>

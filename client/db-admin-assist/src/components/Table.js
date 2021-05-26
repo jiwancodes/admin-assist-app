@@ -7,26 +7,38 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import ModalBootstrap from './ModalBootstrap'
+
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
-    maxWidth:1000,
-    margin:"auto"
+    minWidth: 750,
+    maxWidth: 1000,
+    margin: "auto"
   },
 });
 
 export default function BasicTable(props) {
   const classes = useStyles();
-  const rows=props.rows;
+  const rows = props.rows;
   console.log(rows);
+
+  // const extendExpDateButtonClickHandler = (event) => {
+  //   event.preventDefault();
+  //   console.log(event.target.value)
+  //   const row=event.target.value;
+  //   console.log("clicked");
+  //   console.log(row);
+  //   props.setAlert(true);
+  //   props.setupdateUser(row);
+  // }
 
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            {/* <TableCell><b>Id Login</b></TableCell> */}
+            <TableCell align="center"><b>SN</b></TableCell>
             <TableCell align="center"><b>Username</b></TableCell>
             <TableCell align="center"><b>Phone</b></TableCell>
             <TableCell align="center"><b>Expiry Date</b></TableCell>
@@ -34,13 +46,13 @@ export default function BasicTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.username}>
-            {/* <TableCell component="th" scope="row">{row.idlogin}</TableCell> */}
-              <TableCell component="th" align="center" scope="row">{row.username}</TableCell>
+          {rows.map((row,i) => (
+            <TableRow key={i}>
+              <TableCell component="th" align="center" scope="row">{i+1}</TableCell>
+              <TableCell align="center" >{row.username}</TableCell>
               <TableCell align="center">{row.phone}</TableCell>
               <TableCell align="center">{row.expiry_date}</TableCell>
-              <TableCell align="center"><button>Update Expiry Date</button></TableCell>
+              <TableCell align="center"><ModalBootstrap row={row} database={props.database} onModalSubmit={props.onModalSubmit}/></TableCell>
             </TableRow>
           ))}
         </TableBody>

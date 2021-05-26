@@ -15,7 +15,7 @@ app.get('/',(req,res)=>{
 })
 app.get('/user/details/npstock',actions.getAllUserDetailsOfNpstocks)
 app.get('/user/details/systemxlite',actions.getAllUserDetailsOfSystemxlite)
-app.post('user/search',actions.search)
+app.post('/user/expdate/add',actions.addExpiryDate)
 
 if(process.env.NODE_ENV==='development'){
    app.use( morgan('dev'))  

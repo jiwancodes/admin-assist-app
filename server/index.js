@@ -9,15 +9,6 @@ app.use(express.json())
 app.use(cors())
 
 actions.connectDatabase();
-<<<<<<< HEAD
-=======
-// app.use(express.static()); //here is important thing - no static directory, because all static :)
-// app.use(express.static('public'))
-
-// app.get("/*", function(req, res) {
-//     res.sendFile(__dirname + '../public/index.html');
-// });
->>>>>>> 8c53dd073dea05876b7d7d8c5085ca5ce046b501
 
 app.get('/',(req,res)=>{
     res.send("hello world");

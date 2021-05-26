@@ -1,17 +1,13 @@
 import React from 'react'
 import Home from './Home'
-import { BrowserRouter as Router, Route,Redirect} from 'react-router-dom';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 
 function App() {
   return (
      /* opening landing page only on /manualupdate path  */
     <Router>
       <div className="App">
-<<<<<<< HEAD
         {/* <Route exact path='/' component={() => (<Redirect to='/manualupdate' />)}/> */}
-=======
-        <Route exact path='/' component={() => (<Redirect to='/manualupdate' />)}/>
->>>>>>> 8c53dd073dea05876b7d7d8c5085ca5ce046b501
         <Route exact path='/manualupdate' component={Home}/>
       </div>
     </Router>

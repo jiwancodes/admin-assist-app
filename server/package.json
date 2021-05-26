@@ -1,7 +1,6 @@
 {
   "name": "server",
   "version": "1.0.0",
-<<<<<<< HEAD
   "description": "backend for expiry date updator",
   "main": "index.js",
   "scripts": {
@@ -9,15 +8,6 @@
     "dev": "cross-env NODE_ENV=development nodemon index"
   },
   "author": "jiwan",
-=======
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "corss-env NODE_ENV=production node server",
-    "dev": "cross-env NODE_ENV=development nodemon server"
-  },
-  "author": "",
->>>>>>> 8c53dd073dea05876b7d7d8c5085ca5ce046b501
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

@@ -6,10 +6,6 @@
 /server/config
 /server/config/config.js
 /client/db-admin-assist/node_modules/
-<<<<<<< HEAD
-=======
-/client/db-admin-assist/public
->>>>>>> 8c53dd073dea05876b7d7d8c5085ca5ce046b501
 /client/db-admin-assist/package_lock
 
 

@@ -7,7 +7,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-// import ModalBootstrap from './ModalBootstrap'
 import BootstrapModal from './BootstrapModal';
 
 
@@ -22,8 +21,6 @@ const useStyles = makeStyles({
 export default function BasicTable(props) {
   const classes = useStyles();
   const rows = props.rows;
-  console.log(rows);
-
 
   return (
     <TableContainer component={Paper}>
@@ -44,7 +41,7 @@ export default function BasicTable(props) {
               <TableCell align="center" >{row.username}</TableCell>
               <TableCell align="center">{row.phone}</TableCell>
               <TableCell align="center">{row.expiry_date}</TableCell>
-              <TableCell align="center"><BootstrapModal row={row} database={props.database} onModalSubmit={props.onModalSubmit}/></TableCell>
+              <TableCell align="center"><BootstrapModal row={row} database={props.database} fetchAllDataByOption={props.fetchAllDataByOption}/></TableCell>
             </TableRow>
           ))}
         </TableBody>

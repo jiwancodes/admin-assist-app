@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import axios from 'axios';
-import Alert from './Alert';
+import CustomizedSnackbars from './CustomizedSnackbars'
 
 const customStyles = {
     content : {
@@ -11,6 +11,7 @@ const customStyles = {
       bottom                : 'auto',
       marginRight           : '-50%',
       transform             : 'translate(-50%, -50%)',
+      width: "auto",
     }
   };
 
@@ -20,7 +21,10 @@ function BootstrapModal(props) {
     const [modalIsOpen,setIsOpen] = React.useState(false);
     const [extensionOption,setextensionOption] = React.useState("fiveDays");
     const [showAlert, setshowAlert] = React.useState(false);
-    const [response, setresponse] = React.useState("");
+    const [submitting,setSubmitting] = React.useState(false);
+    const [response, setresponse] = React.useState(false);
+    const [responseData, setresponseData] = React.useState(false);
+
 
 
 
@@ -28,18 +32,20 @@ function BootstrapModal(props) {
     setIsOpen(true);
   }
   const closeModal=()=>{
+    setresponse(false);
     setIsOpen(false);
+    props.fetchAllDataByOption(props.database);
   }
 
 
     const onExtensionOptionChangeHandler=(event)=>{
-        console.log("onExtensionChangeHandler called");
-        console.log("from event")
-        console.log(event.target.value);
+        // console.log("onExtensionChangeHandler called");
+        // console.log(event.target.value);
         setextensionOption(event.target.value);
       }
 
       const onModalSubmit=()=>{
+          setSubmitting(true);
         const payload={
           "option":extensionOption,
           "database":props.database,
@@ -47,34 +53,35 @@ function BootstrapModal(props) {
         };
         axios.post('http://localhost:5000/user/expdate/add',payload).then((response)=>{
           console.log(response.data);
-          setresponse(response.data);
-          setshowAlert(true);
-    
+          setresponse(response.data.success);
+          setresponseData(response.data);
+          setshowAlert(true);    
         }).catch((e)=>{
+            setshowAlert(true);
           console.log(e)
-          setshowAlert(true);
+        }).finally(()=>{
+            // console.log(showAlert);
+            setSubmitting(false);
+            closeModal();
         });
     
-      }
-      const renderAlert = () => {
-        if (showAlert) {
-          return <Alert success={response.success} msg={response.msg} onModalSubmit={onModalSubmit}/>
-        }
       }
   
     return (
         <div style={customStyles}>
+            <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} responseData={responseData}/>
             <Button onClick={openModal}>Extend Expiry Date</Button>
             <Modal show={modalIsOpen}
           onRequestClose={closeModal} 
            style={customStyles} >
-                <Modal.Header  style={{ display: 'flex', justifyContent: "flex-end" }}>
+                <Modal.Header  style={{ display: 'flex', justifyContent: "sapace-between" }}>
+                   <p><b>User Name :</b> <b>{props.row.username}</b></p> 
                 <button onClick={closeModal}>close</button>
                 </Modal.Header>
                 <Modal.Body>
                         <h2 style={{ margin: 1, padding: 2 ,color: "red"}}>Alert</h2>
                         <h4 style={{ margin: 1, padding: 2,color: "red" }}>This may alter the database. So be sure before commiting to change.</h4>
-                    <div style={{ margin: 5, padding: 2 }}>Extend expiry date of user <b>{props.row.username}</b> by:
+                    <div style={{ margin: 5, padding: 2 ,display: 'flex', justifyContent: "flex-end" }}>Extend expiry date of user by:
                          <select value={extensionOption} onChange={onExtensionOptionChangeHandler}>
                             <option value="fiveDays">5 days</option>
                             <option value="oneYear">1 year</option>
@@ -83,11 +90,9 @@ function BootstrapModal(props) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                <div style={{display:'flex',justifyContent:"flex-end"}}><button  onClick={onModalSubmit}>Commit</button></div>
+                <div style={{display:'flex',justifyContent:"flex-end"}}><button disabled={submitting||response} onClick={onModalSubmit}>{!(submitting||response)?"commit":submitting?"Submitting...":"Updated"}</button></div>
 
                 </Modal.Footer>
-                {renderAlert}
-
             </Modal>
 
         </div>

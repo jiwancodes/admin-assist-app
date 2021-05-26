@@ -7,7 +7,7 @@ function App() {
      /* opening landing page only on /manualupdate path  */
     <Router>
       <div className="App">
-        <Route exact path='/' component={() => (<Redirect to='/manualupdate' />)}/>
+        {/* <Route exact path='/' component={() => (<Redirect to='/manualupdate' />)}/> */}
         <Route exact path='/manualupdate' component={Home}/>
       </div>
     </Router>

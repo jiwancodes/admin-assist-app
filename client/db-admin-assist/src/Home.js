@@ -2,6 +2,7 @@ import { React, useState, useEffect } from 'react'
 import SearchBar from 'material-ui-search-bar'
 import BasicTable from './components/Table'
 import axios from 'axios'
+import config from './config/config.json';
 
 function Home() {
   const [showTable, setshowTable] = useState(false);
@@ -11,7 +12,7 @@ function Home() {
 
 //fetches data for npstock users just once after initial render  
   useEffect(() => {
-    axios.get("http://localhost:5000/user/details/npstock").then((response) => {
+    axios.get(`${config.serverIP}/user/details/npstock`).then((response) => {
       console.log("here is response message",response.data.msg);
       // console.log(response.data.rows);
       var tempData = JSON.parse(response.data.rows);
@@ -25,7 +26,7 @@ function Home() {
   //switches tables based on option for fetching users of npstock and systemxlite
   const fetchAllDataByOption = (option) => {
     console.log("fetche data called");
-    axios.get(`http://localhost:5000/user/details/${option}`).then((response) => {
+    axios.get(`${config.serverIP}/user/details/${option}`).then((response) => {
       // console.log("here are rows");
       // console.log(response.data.rows);
       var tempData = JSON.parse(response.data.rows);

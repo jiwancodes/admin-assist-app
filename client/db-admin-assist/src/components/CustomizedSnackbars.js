@@ -37,7 +37,7 @@ export default function CustomizedSnackbars(props) {
           horizontal: 'center',
         }}
          open={props.open} 
-         autoHideDuration={3000} 
+         autoHideDuration={2000} 
          onClose={handleClose}>
         <Alert onClose={handleClose} severity={props.responseData.success?"success":"error"}>
           {props.responseData.msg}

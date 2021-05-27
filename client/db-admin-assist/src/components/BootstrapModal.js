@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import axios from 'axios';
 import CustomizedSnackbars from './CustomizedSnackbars'
+import config from '../config/config.json';
 
 const customStyles = {
     content : {
@@ -51,7 +52,7 @@ function BootstrapModal(props) {
           "database":props.database,
           "row":props.row,
         };
-        axios.post('http://localhost:5000/user/expdate/add',payload).then((response)=>{
+        axios.post(`${config.serverIP}/user/expdate/add`,payload).then((response)=>{
           console.log(response.data);
           setresponse(response.data.success);
           setresponseData(response.data);

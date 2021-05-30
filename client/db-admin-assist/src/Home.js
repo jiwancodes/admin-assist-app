@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react'
 import SearchBar from 'material-ui-search-bar'
-import BasicTable from './components/Table'
+import CustomPaginationActionsTable from './components/CustomPaginationActionsTable'
 import axios from './axios-order'
 
 function Home() {
@@ -59,14 +59,14 @@ function Home() {
   //handles optional rendering of table i.e renders table only if data is present
   const renderTable = () => {
     if (showTable) {
-      return <BasicTable rows={userDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption}/>
+      return <CustomPaginationActionsTable rows={userDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption}/>
     }
   }
 
   return (
     <div className="App">
       <div className="searchBarWrapper" style={{
-        width: "80%", minWidth: 500, margin: "10px auto", position: "fixed",
+        width: "80%", minWidth: 500, maxWidth:1100, margin: "10px auto", position: "fixed",
         top: 0, left: "10%", display: "flex", justifyContent: "space-around"
       }}>
         <SearchBar

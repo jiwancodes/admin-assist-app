@@ -52,7 +52,7 @@ function BootstrapModal(props) {
       "row": props.row,
     };
     axios.post(`/user/expdate/add`, payload).then((response) => {
-      console.log(response.data);
+      console.log(response.data.success);
       setresponse(response.data.success);
       setresponseData(response.data);
       setshowAlert(true);

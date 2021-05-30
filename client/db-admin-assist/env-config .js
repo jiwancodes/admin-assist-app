@@ -1,3 +1,4 @@
 window._env_={
-    DBADMIN_ASSIST_APP_URL:'http://localhost:3000/manualupdate',
+    REACT_APP_DBADMIN_ASSIST_APP_URL:'http://localhost:6797',
 };
+// eslint-disable-line

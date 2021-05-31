@@ -1,0 +1,24 @@
+.container {
+    text-align: center;
+  }
+  
+  .header {
+    width: 100%;
+    display: flex;
+    margin-top: 5px;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  .searchBarWrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5px;
+    align-items: flex-end;
+    justify-content: space-around;
+  }
+  .searchBarWrapper MaterialTablePagination{
+    align-items: flex-end ;
+  }

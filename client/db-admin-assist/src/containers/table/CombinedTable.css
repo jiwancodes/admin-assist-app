@@ -1,24 +1,30 @@
 .container {
   text-align: center;
+  width: 100%;
 }
 
 .header {
-  width: 100%;
   display: flex;
-  margin-top: 5px;
   justify-content: flex-end;
   align-items: center;
+  margin-top: 5px;
   font-size: calc(10px + 2vmin);
-  color: white;
+  background-color: white;
+  z-index: 1;
 }
 .searchBarWrapper {
   width: 100%;
+  min-width: 1000px;
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
   align-items: flex-end;
   justify-content: space-around;
 }
-.searchBarWrapper MaterialTablePagination{
-  align-items: flex-end ;
+.searchBarWrapper MaterialTablePagination {
+  align-items: flex-end;
+}
+.tableWrapper{
+   margin:10px;
+   min-width:800px;
 }

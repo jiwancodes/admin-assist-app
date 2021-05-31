@@ -3,22 +3,25 @@
   }
   
   .header {
-    width: 100%;
     display: flex;
-    margin-top: 5px;
     justify-content: flex-end;
     align-items: center;
     font-size: calc(10px + 2vmin);
-    color: white;
+    background-color: white;
+    z-index: 1;
   }
   .searchBarWrapper {
     width: 100%;
+    min-width: 1000px;
     display: flex;
     flex-direction: row;
     margin-bottom: 5px;
     align-items: flex-end;
     justify-content: space-around;
   }
-  .searchBarWrapper MaterialTablePagination{
-    align-items: flex-end ;
+  .searchBarWrapper MaterialTablePagination {
+    align-items: flex-end;
+  }
+  .tableWrapper{
+     margin: "60px 10px 10px 10px";
   }

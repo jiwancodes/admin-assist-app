@@ -7,7 +7,6 @@ import './Home.css'
 
 function Home() {
   const [showTable, setshowTable] = useState(false);
-  // const [searchValue, setsearchValue] = useState("");
   const [userDetails, setuserDetails] = useState("");
   const [chooseDatabase, setchooseDatabase] = useState("npstock");
   const [page, setPage] = useState(0);
@@ -59,7 +58,7 @@ function Home() {
             <MaterialTablePagination rows={userDetails} page={page} setPage={setPage} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
             <MaterialSearchBar userDetails={userDetails} setuserDetails={setuserDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption} setshowTable={setshowTable}/>
           </div>
-          <div className="tableWrapper" style={{ margin: "60px 10px 10px 10px", }}>
+          <div className="tableWrapper" >
             <MaterialTable rowsPerPage={rowsPerPage} page={page} rows={userDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption} />
           </div>
         </div> : <div></div>}

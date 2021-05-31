@@ -3,9 +3,9 @@ import MaterialSearchBar from '../../components/MaterialSearchBar'
 import MaterialTable from '../../components/MaterialTable'
 import MaterialTablePagination from '../../components/MaterialTablePagination'
 import axios from '../../axios-order'
-import './Combined.css'
+import './CombinedTable.css'
 
-function Home() {
+function CombinedTable() {
   const [showTable, setshowTable] = useState(false);
   // const [searchValue, setsearchValue] = useState("");
   const [userDetails, setuserDetails] = useState("");
@@ -59,7 +59,7 @@ function Home() {
             <MaterialTablePagination rows={userDetails} page={page} setPage={setPage} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
             <MaterialSearchBar userDetails={userDetails} setuserDetails={setuserDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption} setshowTable={setshowTable}/>
           </div>
-          <div className="tableWrapper" style={{ margin: "60px 10px 10px 10px", }}>
+          <div className="tableWrapper">
             <MaterialTable rowsPerPage={rowsPerPage} page={page} rows={userDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption} />
           </div>
         </div> : <div></div>}
@@ -67,4 +67,4 @@ function Home() {
   )
 }
 
-export default Home
+export default CombinedTable

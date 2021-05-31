@@ -59,7 +59,7 @@ function CombinedTable() {
             <MaterialTablePagination rows={userDetails} page={page} setPage={setPage} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
             <MaterialSearchBar userDetails={userDetails} setuserDetails={setuserDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption} setshowTable={setshowTable}/>
           </div>
-          <div className="tableWrapper">
+          <div className="tableWrapper" >
             <MaterialTable rowsPerPage={rowsPerPage} page={page} rows={userDetails} database={chooseDatabase} fetchAllDataByOption={fetchAllDataByOption} />
           </div>
         </div> : <div></div>}

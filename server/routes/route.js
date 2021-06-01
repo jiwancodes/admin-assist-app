@@ -9,7 +9,7 @@ router.get('/',(req,res)=>{
 })
 
 //@route POST /adduser
-router.post('/adduser',actions.addNewUser)
+router.post('/signup',actions.addNewUser)
 //api to fetch required details of all users of npstock
 router.get('/user/details/npstock',actions.getAllUserDetailsOfNpstocks)
 

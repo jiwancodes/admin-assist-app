@@ -1,6 +1,6 @@
 import React from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert  from '@material-ui/lab/Alert';
+import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
 
 //This is material Ui customized snackbar
@@ -20,26 +20,26 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CustomizedSnackbars(props) {
   const classes = useStyles();
+  const { open, msg, setOpen, severity } = props;
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
 
-    props.setOpen(false);
+    setOpen(false);
   };
 
   return (
     <div className={classes.root}>
       <Snackbar
-      anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-         open={props.open} 
-         autoHideDuration={3000}>
-        <Alert onClose={handleClose} severity={props.responseData.success?"success":"error"}>
-          {props.responseData.msg}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={open}
+        autoHideDuration={2000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert onClose={handleClose} severity={severity ? "success" : "error"}>
+          {msg}
         </Alert>
       </Snackbar>
     </div>

@@ -64,12 +64,11 @@ function BootstrapModal(props) {
       setSubmitting(false);
       closeModal();
     });
-
   }
 
   return (
     <div style={customStyles}>
-      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} responseData={responseData} />
+      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={responseData.msg} severity={responseData.success}/>
       <Button onClick={openModal}>Extend Expiry Date</Button>
       <Modal show={modalIsOpen}
         style={customStyles} >

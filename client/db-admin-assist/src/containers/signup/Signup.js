@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState, useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,11 +7,18 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-// import Box from '@material-ui/core/Box';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import isEmpty from '../../validation/is-empty';
+import validateEmail from '../../validation/validateEmail';
+import validatePassword from '../../validation/validatePassword';
+import validateUser from '../../validation/validateUser';
+import CustomizedSnackbars from '../../components/CustomizedSnackbars';
+import axios from '../../axios-order';
+// import Login from '../login/Login';
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,9 +42,61 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const [username, setusername] = useState("");
+  const [email, setemail] = useState("");
+  const [password1, setpassword1] = useState("");
+  const [password2, setpassword2] = useState("");
+  const [showAlert, setshowAlert] = useState(false);
+  const [alertMsg, setalertMsg] = useState("");
+
+
+
+
+
+  const onchangeHandler = (event) => {
+    if (event.target.name === "username") {
+      setusername(event.target.value);
+    } if (event.target.name === "email") {
+      setemail(event.target.value);
+    } if (event.target.name === "password1") {
+      setpassword1(event.target.value);
+    } if (event.target.name === "password2") {
+      setpassword2(event.target.value);
+    }
+
+  }
+
+  const onSubmitClickHandler = (event) => {
+    // event.preventDefault();
+    if (isEmpty(username) || isEmpty(email) || isEmpty(password1) || isEmpty(password2)) {
+      console.log("field is empty");
+      setalertMsg("one or more field is empty");
+      setshowAlert(true);
+
+    }else{if(validateEmail(email)&&validatePassword(password1,password2)&&validateUser(username)){
+      const payload={
+        "username":username,
+        "email":email,
+        "password":password1
+      };
+      axios.post("/signup",payload).then((response) => {
+        console.log(response.data.success);
+        setshowAlert(true);
+      }).catch((e) => {
+
+      }).finally(() => {
+
+      });
+
+    }
+  }
+
+  }
+
 
   return (
     <Container component="main" maxWidth="xs">
+      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={false} />
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -47,16 +106,18 @@ export default function SignIn() {
           Sign Up
         </Typography>
         <form className={classes.form} noValidate>
-        <TextField
+          <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="name"
+            id="username"
             label="Full Name"
-            name="name"
-            autoComplete="name"
+            name="username"
+            autoComplete="username"
             autoFocus
+            onChange={onchangeHandler}
+            value={username}
           />
           <TextField
             variant="outlined"
@@ -68,6 +129,8 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            onChange={onchangeHandler}
+            value={email}
           />
           <TextField
             variant="outlined"
@@ -78,8 +141,10 @@ export default function SignIn() {
             label="Password"
             type="password"
             id="password1"
-            autoComplete="current-password"
-          /><TextField
+            onChange={onchangeHandler}
+            value={password1}
+          />
+          <TextField
             variant="outlined"
             margin="normal"
             required
@@ -88,18 +153,19 @@ export default function SignIn() {
             label="Confirm Password"
             type="password"
             id="password2"
-            autoComplete="current-password"
+            onChange={onchangeHandler}
+            value={password2}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={onSubmitClickHandler}
           >
             Sign In
           </Button>
@@ -117,9 +183,9 @@ export default function SignIn() {
           </Grid>
         </form>
       </div>
-     {/* <Box mt={8}>
+      {/* <Box mt={8}>
          <Copyright /> 
-      </Box>*/}
+      </Box> */}
     </Container>
   );
 }

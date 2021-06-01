@@ -1,5 +1,7 @@
 const mysql = require('mysql2/promise');
-const dbConfig = require('../config/db_config');
+const config = require('../config/config');
+var JwtStrategy = require('passport-jwt').Strategy
+var ExtractJwt = require('passport-jwt').ExtractJwt
 var bcrypt = require('bcrypt');
 const moment = require('moment');
 
@@ -10,7 +12,7 @@ const functions = {
     //establish initial connection with database and a test query
     connectDatabase: async () => {
         try {
-            connection = await mysql.createConnection(dbConfig.mysql_config);
+            connection = await mysql.createPool(config.mysql_config);
             var testQuery = "SELECT * FROM login;"
             var [rows, fields] = await connection.query(testQuery);
             console.log("successfully connected");
@@ -21,6 +23,30 @@ const functions = {
         }
 
     },
+    // jwtPassportStratagy:function(passport){
+    //     var opts ={}
+    //     opts.secretOrKey = config.secret,
+    //     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
+    //     passport.use(new JwtStrategy(opts,function(jwt_payload,done){
+    //         // query="SELECT * FROM systemUser WHERE "
+    //         User.find({
+    //             id:jwt_payload.id
+    //         }
+    //         ,function(err,user){
+    //             if(err) {
+    //                 return done(err,false)
+    //             }
+    //             if(user){
+    //                 return done(null,user)
+    //             }
+    //             else{
+    //                 return done(null, false)
+    //             } 
+    //         })
+    //     }))
+        
+    // },
+    
     addNewUser: async (req, res) => {
         console.log(" adduser api called");
         console.log('email is', req.body.email);

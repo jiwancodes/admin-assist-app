@@ -5,6 +5,7 @@ import NotFound from './containers/notfound/NotFound'
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Login from './containers/login/Login'
 import Signup from './containers/signup/Signup'
+// import SignUpForm from './components/SignUpForm'
 
 
 function App() {

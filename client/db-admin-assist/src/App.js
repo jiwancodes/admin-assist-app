@@ -1,10 +1,11 @@
 import React from 'react'
 import Home from './containers/home/Home'
 import CombinedTable from './containers/table/CombinedTable'
+import NotFound from './containers/notfound/NotFound'
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import NotFound from './containers/notfound/NotFound';
-import Signup from './containers/signup/Signup';
-import Login from './containers/login/login'
+import Login from './containers/login/Login'
+import Signup from './containers/signup/Signup'
+
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
     <Router>
       <div className="App">
         <Switch>
-        <Route exact path='/' component={Login}/>
+        <Route exact path='/' component={Signup}/>
+        <Route exact path='/login' component={Login}/>
         <Route exact path='/home' component={Home}/>
         <Route exact path='/manualupdate' component={CombinedTable}/>
         <Route component={NotFound}></Route>

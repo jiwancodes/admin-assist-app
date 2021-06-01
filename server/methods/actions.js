@@ -1,15 +1,16 @@
 const mysql = require('mysql2/promise');
 const dbConfig = require('../config/db_config');
+var bcrypt = require('bcrypt');
 const moment = require('moment');
+
 
 //this connection is global database connection variable for this page
 var connection
-
 const functions = {
     //establish initial connection with database and a test query
     connectDatabase: async () => {
         try {
-            connection = await mysql.createConnection(dbConfig.config);
+            connection = await mysql.createConnection(dbConfig.mysql_config);
             var testQuery = "SELECT * FROM login;"
             var [rows, fields] = await connection.query(testQuery);
             console.log("successfully connected");
@@ -20,89 +21,60 @@ const functions = {
         }
 
     },
-    addNewUser: function (req, res) {
+    addNewUser: async (req, res) => {
         console.log(" adduser api called");
         console.log('email is', req.body.email);
-        if ((req.body.username == null&&req.body.email == null && req.body.token == null)) {
+        if ((req.body.username == null && req.body.email == null && req.body.password == null)) {
             res.json({ success: false, msg: 'Enter all fields' })
         }
         else {
             try {
-                const getQuery = `INSERT INTO systemUser (username,email,token) VALUES(${req.body.username},${req.body.email},${req.body.token});`
-                const [rows, fields] = await connection.query(getQuery);
+                bcrypt.genSalt(10, function (err, salt) {
+                    if (!err) {
+                        bcrypt.hash(req.body.password, salt, function (err, hash) {
+                            if (!err) {
+                                req.body.password = hash
+                                console.log("email is :", req.body.email);
+                                console.log("username is :", req.body.username);
+                                console.log("password is", req.body.password);
+                                
+                            }
+                        })
+                    }
+                });
+               try{
+                console.log(req.body.password);
+                const getQuery = `INSERT INTO systemUser(username,email,password) VALUES(?,?,?);`
+                // const getQuery = `INSERT INTO systemUser(username,email,password) VALUES("Ram badhur","ram@ram.com","ranfanfajn");`;
+                                const [rows,fields] = await connection.query(getQuery,[req.body.username,req.body.email,req.body.password]);
+                                if (rows) {
+                                    res.json({
+                                        "success": true,
+                                         "msg":'User successfully created',
+                                         "fields":fields,
+                                         "rows":rows
+                                    })
+                                }
+               }
+               catch(err){
+                res.json({
+                    "success": false,
+                    "msg": "User already exist for this email",
+                    "error":err
+                })
+
+               }
 
             }
             catch (e) {
                 console.log(e);
-            }
-            console.log("password and email not null");
-            User.findOne({
-                email: req.body.email
-            },
-                function (err, user) {
-                    if (err) throw err
-                    if (!user) {
-                        var newUser = User({
-                            email: req.body.email,
-                            password: req.body.password
-                        });
-                        console.log(newUser.email);
-                        newUser.save(function (err, newUser) {
-                            if (err) {
-                                res.json({ success: false, msg: 'failed to save' })
-                            }
-                            else {
-                                res.json({ success: true, msg: 'Successfully Saved' })
-                            }
-                        })
-                    }
-                    else {
-                        res.json({
-                            success: false,
-                            msg: "User already exist for this email"
-                        })
-                    }
+                res.json({
+                    success: false,
+                    msg: 'failed to generate hash',
+                    error: e
                 })
-
+            }
         }
-    },
-    authenticate: function (req, res) {
-        console.log(" fetchNew api called");
-        console.log('email is', req.body.email);
-        User.findOne({
-            email: req.body.email
-        }, function (err, user) {
-            if (err) throw err
-            if (!user) {
-                res.status(403).send({ success: false, msg: "Authentication failed, User not found" })
-            }
-            else {
-                user.comparePassword(req.body.password, function (err, isMatch) {
-                    if (isMatch && !(err)) {
-                        var newUser = user
-                        delete newUser['password']
-                        console.log(newUser)
-                        var token = jwt.encode(newUser, config.secret)
-                        res.json({
-                            success: true,
-                            token: token,
-                            msg: "User authenticated"
-                        })
-
-                    }
-                    else {
-                        return res.status(403).send({
-                            success: false,
-                            msg: "Authentication Failed, Wrong Password"
-
-                        })
-                    }
-
-                })
-            }
-        })
-
-
     },
     //Api callback function to fetch required data from table login
     getAllUserDetailsOfNpstocks: async (req, res) => {

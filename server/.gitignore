@@ -1,13 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-/server/node_modules
-/server/package_lock.json
+/node_modules
 /package_lock.json
-/server/config
-/server/config/config.js
-/client/db-admin-assist/node_modules/
-/client/db-admin-assist/package_lock
-
+/config
+/config/config.js
+.env
 
 # dependencies
 /node_modules
@@ -18,8 +15,7 @@
 /coverage
 
 # production
-/client/db-admin-assist/build
-/server/.env
+/build
 
 # misc
 .DS_Store
@@ -31,3 +27,5 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+

@@ -1,9 +1,12 @@
 const mysql = require('mysql2/promise');
 const config = require('../config/config');
+// var jwt = require('jwt-simple')
 var JwtStrategy = require('passport-jwt').Strategy
 var ExtractJwt = require('passport-jwt').ExtractJwt
+const jwt = require('jsonwebtoken');    
 var bcrypt = require('bcrypt');
 const moment = require('moment');
+const saltRounds = 10;
 
 
 //this connection is global database connection variable for this page
@@ -23,84 +26,199 @@ const functions = {
         }
 
     },
-    // jwtPassportStratagy:function(passport){
-    //     var opts ={}
-    //     opts.secretOrKey = config.secret,
-    //     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt');
-    //     passport.use(new JwtStrategy(opts,function(jwt_payload,done){
-    //         // query="SELECT * FROM systemUser WHERE "
-    //         User.find({
-    //             id:jwt_payload.id
-    //         }
-    //         ,function(err,user){
-    //             if(err) {
-    //                 return done(err,false)
-    //             }
-    //             if(user){
-    //                 return done(null,user)
-    //             }
-    //             else{
-    //                 return done(null, false)
-    //             } 
-    //         })
-    //     }))
-        
-    // },
-    
+    //api callback for update system users
     addNewUser: async (req, res) => {
-        console.log(" adduser api called");
-        console.log('email is', req.body.email);
-        if ((req.body.username == null && req.body.email == null && req.body.password == null)) {
-            res.json({ success: false, msg: 'Enter all fields' })
+        const username = req.body.username;
+        const email = req.body.email;
+        var password = req.body.password;
+        try {
+            console.log("entered in try");
+            var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ?', [email]);
+            if (user.length > 0) {
+                res.json({
+                    "success": false,
+                    "msg": "User already exist for this Email",
+                    "rows": user,
+                });
+            }
+            else {
+                var salt = await bcrypt.genSalt(saltRounds);
+                var hash = await bcrypt.hash(password, salt);//didnot use callback due to process running in callback hell
+                if (hash) {
+                    password = hash
+                    console.log("email is :", email);
+                    console.log("password is", password);
+                    var [rows, fields] = await connection.query('INSERT INTO systemUser (username, email, password) VALUES("' + username + '", "' + email + '", "' + password + '")',
+                        [username, email, password]);
+                    res.json({
+                        "success": true,
+                        "msg": "successfully created user",
+                        "rows": rows,
+
+                    });
+                }
+            }
+
+        } catch (err) {
+            console.log(err);
+            res.json({
+                "success": false,
+                "msg": "Failed to created user",
+                "error": err,
+            })
         }
-        else {
-            try {
-                bcrypt.genSalt(10, function (err, salt) {
-                    if (!err) {
-                        bcrypt.hash(req.body.password, salt, function (err, hash) {
-                            if (!err) {
-                                req.body.password = hash
-                                console.log("email is :", req.body.email);
-                                console.log("username is :", req.body.username);
-                                console.log("password is", req.body.password);
-                                
-                            }
+    },
+    passportStrategy: async (passport) => {
+        var opts = {}
+        opts.secretOrKey = config.secret,
+        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
+        console.log("here i am");
+        passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
+            console.log(jwt_payload);
+            return done(null, false);
+            // await connection.query('SELECT * FROM systemUser WHERE idlogin = ?', [jwt_payload.idlogin],function(err, rows,fields) {
+            //     if(err) {
+            //         return done(err,false)
+            //     }
+            //     if(rows){
+            //         return done(null,rows)
+            //     }
+            //     else{
+            //         return done(null, false)
+            //     } 
+            // });
+           
+            // try {
+            //     var [user, field] = await connection.query('SELECT * FROM systemUser WHERE idlogin = ?', [jwt_payload.idlogin]);
+            //     if (user) {
+            //         return done(null, user)
+            //     }
+            //     else {
+            //         return done(null, false)
+            //     }
+            // }
+            // catch (err) {
+            //     console.log(err);
+            //     return done(err, false)
+            // }
+        })
+        );
+
+    }
+    , LoginUser: async (req, res) => {
+        const username = req.body.username;
+        // const email = req.body.email;
+        // var password = req.body.password;s
+        try {
+            console.log("entered in try");
+            var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ? OR username = ?', [username, username]);
+            console.log(user);
+            if (user.length > 0) {
+                console.log("saved hash is ", user[0].password);
+                bcrypt.compare(req.body.password, user[0].password, function (err, value) {
+                    console.log("value is:",value);
+                    if (err) {
+                        throw err;
+                    }
+                    if (value) {
+                        console.log("entered comparison success");
+                        // Send JWT
+                        var newUser = user[0];
+                        delete newUser['password']
+                        console.log(newUser)
+                        var token = jwt.sign({newUser}, config.secret, { expiresIn: 300 });
+                        console.log("token is :", token);
+                        res.json({
+                            success: true,
+                            token: token,
+                            msg: "User authenticated"
+                        });
+                    } else {
+                        // response is OutgoingMessage object that server response http request
+                        res.status(403).send({
+                            success: false,
+                            msg: "Authentication Failed, Wrong Password"
                         })
                     }
                 });
-               try{
-                console.log(req.body.password);
-                const getQuery = `INSERT INTO systemUser(username,email,password) VALUES(?,?,?);`
-                // const getQuery = `INSERT INTO systemUser(username,email,password) VALUES("Ram badhur","ram@ram.com","ranfanfajn");`;
-                                const [rows,fields] = await connection.query(getQuery,[req.body.username,req.body.email,req.body.password]);
-                                if (rows) {
-                                    res.json({
-                                        "success": true,
-                                         "msg":'User successfully created',
-                                         "fields":fields,
-                                         "rows":rows
-                                    })
-                                }
-               }
-               catch(err){
-                res.json({
-                    "success": false,
-                    "msg": "User already exist for this email",
-                    "error":err
-                })
 
-               }
+                // await bcrypt.compare(password, user.password, (error, isMatch) => {
+                //    console.log(" password compare called");
+                //     if (isMatch && !(error)) {
+                //         var newUser = user
+                //         delete newUser['password']
+                //         console.log(newUser)
+                //         var token = jwt.encode(newUser, config.secret, { expiresIn: 300 });
+                //         res.json({
+                //             success: true,
+                //             token: token,
+                //             msg: "User authenticated"
+                //         });
+                // if(error) throw error;
+                // const id =user.idlogin;
+                // const token =jwt.sign({id},config.secret,{
+                //     expiresIn:300,
+                // })
+                //     }
+                //     else {
+                //         return res.status(403).send({
+                //             success: false,
+                //             msg: "Authentication Failed, Wrong Password"
+                //         })
+                //     }
+                // });
+            }
+            else {
+                console.log("user not found");
+                res.status(403).send({ success: false, msg: "Authentication failed, User not found" })
+            }
 
-            }
-            catch (e) {
-                console.log(e);
-                res.json({
-                    success: false,
-                    msg: 'failed to generate hash',
-                    error: e
-                })
-            }
+        } catch (err) {
+            console.log(err);
+            res.json({
+                "success": false,
+                "msg": "Failed to login user",
+                "error": err,
+            })
         }
+    },
+    authenticate: function (req, res) {
+        console.log(" fetchNew api called");
+        console.log('email is', req.body.email);
+        User.findOne({
+            email: req.body.email
+        }, function (err, user) {
+            if (err) throw err
+            if (!user) {
+                res.status(403).send({ success: false, msg: "Authentication failed, User not found" })
+            }
+            else {
+                user.comparePassword(req.body.password, function (err, isMatch) {
+                    if (isMatch && !(err)) {
+                        var newUser = user
+                        delete newUser['password']
+                        console.log(newUser)
+                        var token = jwt.encode(newUser, config.secret)
+                        res.json({
+                            success: true,
+                            token: token,
+                            msg: "User authenticated"
+                        })
+
+                    }
+                    else {
+                        return res.status(403).send({
+                            success: false,
+                            msg: "Authentication Failed, Wrong Password"
+
+                        })
+                    }
+
+                })
+            }
+        })
+
+
     },
     //Api callback function to fetch required data from table login
     getAllUserDetailsOfNpstocks: async (req, res) => {

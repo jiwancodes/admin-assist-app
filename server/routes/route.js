@@ -8,8 +8,12 @@ router.get('/',(req,res)=>{
     res.send("hello world");
 })
 
-//@route POST /adduser
+//@route POST /signup
 router.post('/signup',actions.addNewUser)
+
+//@route POST /login
+router.post('/login',actions.LoginUser)
+
 //api to fetch required details of all users of npstock
 router.get('/user/details/npstock',actions.getAllUserDetailsOfNpstocks)
 

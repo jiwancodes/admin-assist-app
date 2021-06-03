@@ -5,8 +5,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,7 +17,9 @@ import validatePassword from '../../validation/validatePassword';
 import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
-// import Login from '../login/Login';
+import { Redirect} from 'react-router-dom';
+
+import LogIn from '../login/Login';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -39,6 +41,17 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
+const guideStyle = {
+  position: "relative",
+  top: "-7px",
+  margin: "auto",
+  width: "35vw",
+  textAlign: "center",
+  fontSize: "9.5px",
+  fontFamily: "Comfortaa sans-serif",
+  boxSizing: "borderbox",
+  color: "#f10000"
+};
 
 export default function SignIn() {
   const classes = useStyles();
@@ -48,12 +61,10 @@ export default function SignIn() {
   const [password2, setpassword2] = useState("");
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
-
-
-
-
+  const [errors, seterror] = useState(false);
 
   const onchangeHandler = (event) => {
+    seterror(false);
     if (event.target.name === "username") {
       setusername(event.target.value);
     } if (event.target.name === "email") {
@@ -67,29 +78,36 @@ export default function SignIn() {
   }
 
   const onSubmitClickHandler = (event) => {
-    // event.preventDefault();
+    event.preventDefault();
     if (isEmpty(username) || isEmpty(email) || isEmpty(password1) || isEmpty(password2)) {
       console.log("field is empty");
+      seterror(true);
       setalertMsg("one or more field is empty");
       setshowAlert(true);
 
-    }else{if(validateEmail(email)&&validatePassword(password1,password2)&&validateUser(username)){
-      const payload={
-        "username":username,
-        "email":email,
-        "password":password1
+    }
+    else if (validateEmail(email) && validatePassword(password1, password2) && validateUser(username)) {
+      console.log("validaton true")
+      const payload = {
+        "username": username,
+        "email": email,
+        "password": password1
       };
-      axios.post("/signup",payload).then((response) => {
+      axios.post("/signup", payload).then((response) => {
+        console.log(response.data);
         console.log(response.data.success);
-        setshowAlert(true);
-      }).catch((e) => {
-
-      }).finally(() => {
-
-      });
+        if(response.data.success){
+          <Redirect to="/login" />
+        }
+      })
+    }
+    else {
+      seterror(true);
+      console.log("one of the field is invalid");
+      setalertMsg("Invalid form fill");
+      setshowAlert(true);
 
     }
-  }
 
   }
 
@@ -119,6 +137,8 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={username}
           />
+          {errors ? (<div style={guideStyle}>username must be 3+ characters long</div>) : null}
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -132,6 +152,7 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={email}
           />
+          {errors ? (<div style={guideStyle}>valid email format example@example.com</div>) : null}
           <TextField
             variant="outlined"
             margin="normal"
@@ -144,6 +165,7 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={password1}
           />
+          {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null}
           <TextField
             variant="outlined"
             margin="normal"
@@ -156,6 +178,8 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={password2}
           />
+          {errors ? (<div style={guideStyle}>be sure to match password</div>) : null}
+
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
@@ -176,7 +200,7 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link to={LogIn} variant="body2">
                 {"have an account? Log In"}
               </Link>
             </Grid>

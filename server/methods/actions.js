@@ -31,6 +31,18 @@ const functions = {
         const username = req.body.username;
         const email = req.body.email;
         var password = req.body.password;
+        if(!validateEmail(email)){
+            return res.status(403).json({
+                "success": false,
+                "msg": "Invalid Email"
+            });
+        } else if(username===null||email===null||password==null){
+            return res.status(403).json({
+                "success": false,
+                "msg": "Empty form fills"
+            });
+        }
+
         try {
             console.log("entered in try");
             var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ?', [email]);
@@ -68,60 +80,24 @@ const functions = {
             })
         }
     },
-    passportStrategy: async (passport) => {
-        var opts = {}
-        opts.secretOrKey = config.secret,
-        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
-        console.log("here i am");
-        passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-            console.log(jwt_payload);
-            return done(null, false);
-            // await connection.query('SELECT * FROM systemUser WHERE idlogin = ?', [jwt_payload.idlogin],function(err, rows,fields) {
-            //     if(err) {
-            //         return done(err,false)
-            //     }
-            //     if(rows){
-            //         return done(null,rows)
-            //     }
-            //     else{
-            //         return done(null, false)
-            //     } 
-            // });
-           
-            // try {
-            //     var [user, field] = await connection.query('SELECT * FROM systemUser WHERE idlogin = ?', [jwt_payload.idlogin]);
-            //     if (user) {
-            //         return done(null, user)
-            //     }
-            //     else {
-            //         return done(null, false)
-            //     }
-            // }
-            // catch (err) {
-            //     console.log(err);
-            //     return done(err, false)
-            // }
-        })
-        );
-
-    }
-    , LoginUser: async (req, res) => {
-        const username = req.body.username;
-        // const email = req.body.email;
-        // var password = req.body.password;s
+    LoginUser: async (req, res) => {
+        const email = req.body.email;
         try {
             console.log("entered in try");
-            var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ? OR username = ?', [username, username]);
+            console.log(email);
+            var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ?', [email]);
             console.log(user);
             if (user.length > 0) {
                 console.log("saved hash is ", user[0].password);
                 bcrypt.compare(req.body.password, user[0].password, function (err, value) {
-                    console.log("value is:",value);
+                    console.log("entered password comarision")
+
                     if (err) {
+                        console.log(err);
                         throw err;
                     }
                     if (value) {
-                        console.log("entered comparison success");
+                        console.log("password comparison success");
                         // Send JWT
                         var newUser = user[0];
                         delete newUser['password']
@@ -134,6 +110,7 @@ const functions = {
                             msg: "User authenticated"
                         });
                     } else {
+                        console.log("wrong password");
                         // response is OutgoingMessage object that server response http request
                         res.status(403).send({
                             success: false,
@@ -141,36 +118,12 @@ const functions = {
                         })
                     }
                 });
-
-                // await bcrypt.compare(password, user.password, (error, isMatch) => {
-                //    console.log(" password compare called");
-                //     if (isMatch && !(error)) {
-                //         var newUser = user
-                //         delete newUser['password']
-                //         console.log(newUser)
-                //         var token = jwt.encode(newUser, config.secret, { expiresIn: 300 });
-                //         res.json({
-                //             success: true,
-                //             token: token,
-                //             msg: "User authenticated"
-                //         });
-                // if(error) throw error;
-                // const id =user.idlogin;
-                // const token =jwt.sign({id},config.secret,{
-                //     expiresIn:300,
-                // })
-                //     }
-                //     else {
-                //         return res.status(403).send({
-                //             success: false,
-                //             msg: "Authentication Failed, Wrong Password"
-                //         })
-                //     }
-                // });
             }
             else {
                 console.log("user not found");
-                res.status(403).send({ success: false, msg: "Authentication failed, User not found" })
+                res.status(403).send({
+                     success: false, 
+                     msg: "Authentication failed, User not found" })
             }
 
         } catch (err) {
@@ -182,42 +135,53 @@ const functions = {
             })
         }
     },
-    authenticate: function (req, res) {
-        console.log(" fetchNew api called");
-        console.log('email is', req.body.email);
-        User.findOne({
-            email: req.body.email
-        }, function (err, user) {
-            if (err) throw err
-            if (!user) {
-                res.status(403).send({ success: false, msg: "Authentication failed, User not found" })
-            }
-            else {
-                user.comparePassword(req.body.password, function (err, isMatch) {
-                    if (isMatch && !(err)) {
-                        var newUser = user
-                        delete newUser['password']
-                        console.log(newUser)
-                        var token = jwt.encode(newUser, config.secret)
-                        res.json({
-                            success: true,
-                            token: token,
-                            msg: "User authenticated"
-                        })
-
-                    }
-                    else {
-                        return res.status(403).send({
-                            success: false,
-                            msg: "Authentication Failed, Wrong Password"
-
-                        })
-                    }
-
-                })
-            }
+    passportStrategy: async (passport) => {
+        var opts = {}
+        opts.secretOrKey = config.secret,
+        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
+        console.log("here i am");
+        passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
+            console.log(jwt_payload);
+            return done(null, false);
         })
+        );
 
+    },
+    getUserInfoFromToken: function (req, res) {
+        console.log(req.headers);
+        if (req.headers.authorization && req.headers.authorization.split(" ")[0] == 'Bearer') {
+            var token = req.headers.authorization.split(" ")[1]
+            try {
+                var decodedToken = jwt.verify(token, config.secret);
+                console.log(decodedToken);
+                res.json({
+                    "success": true,
+                    "token": decodedToken,
+                    "msg": "hello" + decodedToken.username,
+                })
+              } catch(err) {
+                  console.log(err);
+                  res.json({
+                    "success": false,
+                    "msg": "Invalid token",
+                    "error":err
+                })
+                // err
+              }
+        //     var decodedToken = jwt.decode(token, config.secret)
+        //     return res.json({
+        //         success: true,
+        //         token: decodedToken,
+        //         msg: "hello" + decodedToken.email,
+        //     })
+        }
+        else {
+            console.log(req.headers.authorization.split(" ")[0]);
+            return res.json({
+                success: false,
+                msg: "no headers"
+            })
+        }
 
     },
     //Api callback function to fetch required data from table login
@@ -304,4 +268,10 @@ const functions = {
 
     }
 }
+function validateEmail(email) {
+    //eslint-disable-next-line
+      const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
+  
 module.exports = functions;

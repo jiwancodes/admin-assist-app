@@ -61,10 +61,12 @@ export default function SignIn() {
   const [password2, setpassword2] = useState("");
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
-  const [errors, seterror] = useState(false);
+  const [errors, seterror] = useState("");
 
   const onchangeHandler = (event) => {
-    seterror(false);
+    const newErr = {...errors};
+    newErr[event.target.name] = "";
+    seterror(newErr);
     if (event.target.name === "username") {
       setusername(event.target.value);
     } if (event.target.name === "email") {
@@ -81,12 +83,12 @@ export default function SignIn() {
     event.preventDefault();
     if (isEmpty(username) || isEmpty(email) || isEmpty(password1) || isEmpty(password2)) {
       console.log("field is empty");
-      seterror(true);
+      // seterror(true);
       setalertMsg("one or more field is empty");
       setshowAlert(true);
 
     }
-    else if (validateEmail(email) && validatePassword(password1, password2) && validateUser(username)) {
+    else if (validateEmail(email,errors,seterror) && validatePassword(password1, password2,errors,seterror) && validateUser(username,errors,seterror)) {
       console.log("validaton true")
       const payload = {
         "username": username,
@@ -102,7 +104,7 @@ export default function SignIn() {
       })
     }
     else {
-      seterror(true);
+      // seterror(true);
       console.log("one of the field is invalid");
       setalertMsg("Invalid form fill");
       setshowAlert(true);
@@ -137,7 +139,8 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={username}
           />
-          {errors ? (<div style={guideStyle}>username must be 3+ characters long</div>) : null}
+          {/* {errors ? (<div style={guideStyle}>username must be 3+ characters long</div>) : null} */}
+          {errors["username"]? (<div style={guideStyle}>{errors["username"]}</div>):null}
 
           <TextField
             variant="outlined"
@@ -152,7 +155,9 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={email}
           />
-          {errors ? (<div style={guideStyle}>valid email format example@example.com</div>) : null}
+          {/* {errors ? (<div style={guideStyle}>valid email format example@example.com</div>) : null} */}
+          {errors["email"]? (<div style={guideStyle}>{errors["email"]}</div>):null}
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -165,7 +170,9 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={password1}
           />
-          {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null}
+          {/* {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null} */}
+          {errors["password1"]? (<div style={guideStyle}>{errors["password1"]}</div>):null}
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -178,7 +185,9 @@ export default function SignIn() {
             onChange={onchangeHandler}
             value={password2}
           />
-          {errors ? (<div style={guideStyle}>be sure to match password</div>) : null}
+          {/* {errors ? (<div style={guideStyle}>be sure to match password</div>) : null} */}
+          {errors["password2"]? (<div style={guideStyle}>{errors["password2"]}</div>):null}
+
 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}

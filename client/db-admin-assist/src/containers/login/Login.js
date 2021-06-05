@@ -14,7 +14,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import isEmpty from '../../validation/is-empty';
 import validateEmail from '../../validation/validateEmail';
-import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
 import {Redirect } from 'react-router-dom';
@@ -56,16 +55,18 @@ const guideStyle = {
 
 export default function LogIn() {
   const classes = useSomeStyles();
-  const [username, setusername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
-  const [errors, seterror] = useState("false");
+  const [errors, seterror] = useState("");
 
   const onchangeHandler = (event) => {
-    seterror(false);
-    if (event.target.name === "username") {
-      setusername(event.target.value);
+    const newErr = {...errors};
+    newErr[event.target.name] ="";
+    seterror(newErr);
+    if (event.target.name === "email") {
+      setemail(event.target.value);
     } if (event.target.name === "password") {
       setpassword(event.target.value);
     }
@@ -73,23 +74,24 @@ export default function LogIn() {
 
   const onSubmitClickHandler = (event) => {
     // event.preventDefault();
-    if (isEmpty(username) || isEmpty(password)) {
+    if (isEmpty(email) || isEmpty(password)) {
       console.log("field is empty");
-      seterror(true);
       setalertMsg("one or more field is empty");
       setshowAlert(true);
 
     }
     else if (password.length < 6) {
       console.log("password not strong");
-      seterror(true);
+      const newErr = {...errors};
+      newErr["password"] = "password should be of 6+ character";
+      seterror(newErr);
       setalertMsg("please enter password 6+ characters long");
       setshowAlert(true);
     }
-    else if (validateEmail(username) || validateUser(username)) {
+    else if (validateEmail(email,errors,seterror)) {
       console.log("validaton true")
       const payload = {
-        "username": username,
+        "email": email,
         "password": password
       };
       axios.post("/login", payload).then((response) => {
@@ -130,15 +132,17 @@ export default function LogIn() {
             margin="normal"
             required
             fullWidth
-            /* id="username" */
-            label="Username or Email"
-            name="username"
-            autoComplete="username"
+            /* id="email" */
+            label="Email"
+            name="email"
+            autoComplete="email"
             autoFocus
             onChange={onchangeHandler}
-            value={username}
+            value={email}
           />
-          {errors ? (<div style={guideStyle}>Enter valid username or email</div>) : null}
+          {/* {errors ? (<div style={guideStyle}>Enter valid email</div>) : null} */}
+          {errors["email"]? (<div style={guideStyle}>{errors["email"]}</div>):null}
+
           <TextField
             variant="outlined"
             margin="normal"
@@ -151,7 +155,9 @@ export default function LogIn() {
             onChange={onchangeHandler}
             value={password}
           />
-          {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null}
+          {/* {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null} */}
+          {errors["password"]? (<div style={guideStyle}>{errors["password"]}</div>):null}
+
 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}

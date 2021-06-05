@@ -13,6 +13,8 @@ router.post('/signup',actions.addNewUser)
 
 //@route POST /login
 router.post('/login',actions.LoginUser)
+//desc getting user information from token and Bearer authorization header 
+router.get('/getuserinfo',actions.getUserInfoFromToken)
 
 //api to fetch required details of all users of npstock
 router.get('/user/details/npstock',actions.getAllUserDetailsOfNpstocks)

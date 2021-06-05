@@ -4,12 +4,15 @@ function validateEmail(email) {
     return re.test(email);
   }
 
-export default function validate(email) {
+export default function validate(email,errors,seterror) {
   
     if (validateEmail(email)) {
         return true;
-
     } else {
+      var newErr = {...errors};
+      newErr["email"] = "valid email format example@example.com";
+      seterror(newErr);
+      // seterror("valid email format example@example.com");
       console.log("error in email validation");
         return false;
     }

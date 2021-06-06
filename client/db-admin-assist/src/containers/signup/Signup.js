@@ -1,4 +1,8 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState } from 'react';
+// import { connect } from 'react-redux';
+// import PropTypes from 'prop-types';
+// import { withRouter } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -6,7 +10,6 @@ import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,10 +20,7 @@ import validatePassword from '../../validation/validatePassword';
 import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
-import { Redirect} from 'react-router-dom';
-
-import LogIn from '../login/Login';
-
+import Login from "../login/Login"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,7 +53,8 @@ const guideStyle = {
   color: "#f10000"
 };
 
-export default function SignIn() {
+export default function Signup(props) {
+// function Signup(props) {
   const classes = useStyles();
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
@@ -62,9 +63,10 @@ export default function SignIn() {
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
   const [errors, seterror] = useState("");
+  let history = useHistory();
 
   const onchangeHandler = (event) => {
-    const newErr = {...errors};
+    const newErr = { ...errors };
     newErr[event.target.name] = "";
     seterror(newErr);
     if (event.target.name === "username") {
@@ -88,7 +90,7 @@ export default function SignIn() {
       setshowAlert(true);
 
     }
-    else if (validateEmail(email,errors,seterror) && validatePassword(password1, password2,errors,seterror) && validateUser(username,errors,seterror)) {
+    else if (validateEmail(email, errors, seterror) && validatePassword(password1, password2, errors, seterror) && validateUser(username, errors, seterror)) {
       console.log("validaton true")
       const payload = {
         "username": username,
@@ -98,8 +100,15 @@ export default function SignIn() {
       axios.post("/signup", payload).then((response) => {
         console.log(response.data);
         console.log(response.data.success);
-        if(response.data.success){
-          <Redirect to="/login" />
+        if (response.data.success) {
+          // props.history.push("/");
+          console.log("entered but not worked");
+          history.push('/login');
+          // return <Redirect to={Login} />
+        } else {
+          setalertMsg(response.data.msg);
+          setshowAlert(true);
+
         }
       })
     }
@@ -140,7 +149,7 @@ export default function SignIn() {
             value={username}
           />
           {/* {errors ? (<div style={guideStyle}>username must be 3+ characters long</div>) : null} */}
-          {errors["username"]? (<div style={guideStyle}>{errors["username"]}</div>):null}
+          {errors["username"] ? (<div style={guideStyle}>{errors["username"]}</div>) : null}
 
           <TextField
             variant="outlined"
@@ -156,7 +165,7 @@ export default function SignIn() {
             value={email}
           />
           {/* {errors ? (<div style={guideStyle}>valid email format example@example.com</div>) : null} */}
-          {errors["email"]? (<div style={guideStyle}>{errors["email"]}</div>):null}
+          {errors["email"] ? (<div style={guideStyle}>{errors["email"]}</div>) : null}
 
           <TextField
             variant="outlined"
@@ -171,7 +180,7 @@ export default function SignIn() {
             value={password1}
           />
           {/* {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null} */}
-          {errors["password1"]? (<div style={guideStyle}>{errors["password1"]}</div>):null}
+          {errors["password1"] ? (<div style={guideStyle}>{errors["password1"]}</div>) : null}
 
           <TextField
             variant="outlined"
@@ -186,7 +195,7 @@ export default function SignIn() {
             value={password2}
           />
           {/* {errors ? (<div style={guideStyle}>be sure to match password</div>) : null} */}
-          {errors["password2"]? (<div style={guideStyle}>{errors["password2"]}</div>):null}
+          {errors["password2"] ? (<div style={guideStyle}>{errors["password2"]}</div>) : null}
 
 
           <FormControlLabel
@@ -204,12 +213,12 @@ export default function SignIn() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href="#" >
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link to={LogIn} variant="body2">
+              <Link to="/login" >
                 {"have an account? Log In"}
               </Link>
             </Grid>
@@ -222,3 +231,18 @@ export default function SignIn() {
     </Container>
   );
 }
+// Signup.propTypes = {
+//   registerUser: PropTypes.func.isRequired,
+//   auth: PropTypes.object.isRequired,
+//   errors: PropTypes.object.isRequired
+// };
+
+// const mapStateToProps = state => ({
+//   auth: state.auth,
+//   errors: state.errors
+// });
+
+
+// export default connect(mapStateToProps)(withRouter(Signup));
+// export default connect(mapStateToProps, {registerUser})(withRouter(Signup));
+// export default (withRouter(Signup));

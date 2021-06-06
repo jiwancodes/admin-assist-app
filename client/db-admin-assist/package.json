@@ -10,6 +10,7 @@
     "bootstrap": "^5.0.1",
     "material-ui-search-bar": "^1.0.0-beta.14",
     "mdb-react-ui-kit": "^1.0.0-beta5",
+    "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
     "react-bootstrap-table-next": "^4.0.3",

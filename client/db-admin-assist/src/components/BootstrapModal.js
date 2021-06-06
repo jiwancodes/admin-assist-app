@@ -68,7 +68,7 @@ function BootstrapModal(props) {
 
   return (
     <div style={customStyles}>
-      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={responseData.msg} severity={responseData.success}/>
+      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={responseData.msg} severity={responseData.success} />
       <Button onClick={openModal}>Extend Expiry Date</Button>
       <Modal show={modalIsOpen}
         style={customStyles} >
@@ -82,6 +82,7 @@ function BootstrapModal(props) {
           <div style={{ margin: 5, padding: 2, display: 'flex', justifyContent: "flex-end" }}>Extend expiry date of user by:
                          <select value={extensionOption} onChange={onExtensionOptionChangeHandler}>
               <option value="fiveDays">5 days</option>
+             {props.database==='npstock'? <option value="threeMonths">3 months</option>: null}
               <option value="oneYear">1 year</option>
               <option value="lifeTime">life time</option>
             </select>

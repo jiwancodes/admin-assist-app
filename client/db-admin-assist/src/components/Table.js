@@ -23,31 +23,38 @@ const useStyles = makeStyles({
 
 export default function BasicTable(props) {
   const classes = useStyles();
-  const rows = props.rows;
+  // const{rows,database,fetchAllDataByOption}=props
+  const headings=["SN","Username","Phone","Expiry Date","Update Expiry Date"
+  ];
+  // const rows = props.rows;
 
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
-          <TableRow>
-            <TableCell align="center"><b>SN</b></TableCell>
+          <TableRow>{
+            headings.map((i)=><TableCell align="center"><b>{i}</b></TableCell>)            
+            }
+          
+
+            {/* <TableCell align="center"><b>SN</b></TableCell>
             <TableCell align="center"><b>Username</b></TableCell>
             <TableCell align="center"><b>Phone</b></TableCell>
             <TableCell align="center"><b>Expiry Date</b></TableCell>
-            <TableCell align="center"><b>Update Expiry Date</b></TableCell>
+            <TableCell align="center"><b>Update Expiry Date</b></TableCell> */}
           </TableRow>
         </TableHead>
-        <TableBody>
+        {/* <TableBody>
           {rows.map((row,i) => (
             <TableRow key={i}>
               <TableCell component="th" align="center" scope="row">{i+1}</TableCell>
               <TableCell align="center" >{row.username}</TableCell>
               <TableCell align="center">{row.phone}</TableCell>
               <TableCell align="center">{row.expiry_date}</TableCell>
-              <TableCell align="center"><BootstrapModal row={row} database={props.database} fetchAllDataByOption={props.fetchAllDataByOption}/></TableCell>
+              <TableCell align="center"><BootstrapModal row={row} database={database} fetchAllDataByOption={fetchAllDataByOption}/></TableCell>
             </TableRow>
           ))}
-        </TableBody>
+        </TableBody> */}
       </Table>
     </TableContainer>
   );

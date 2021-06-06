@@ -25,5 +25,9 @@ router.get('/user/details/systemxlite',actions.getAllUserDetailsOfSystemxlite)
 //api to update expiry date of a user of either npstock or systemxlite with post option
 router.post('/user/expdate/add',actions.addExpiryDate)
 
+router.post('/updatelog/add',actions.addUpdateLog)
+
+router.post('/updatelogs',actions.fetchExpiryUpdateLogs)
+
 
 module.exports = router 

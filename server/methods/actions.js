@@ -112,7 +112,7 @@ const functions = {
                     } else {
                         console.log("wrong password");
                         // response is OutgoingMessage object that server response http request
-                        res.status(403).send({
+                        res.json({
                             success: false,
                             msg: "Authentication Failed, Wrong Password"
                         })
@@ -235,12 +235,12 @@ const functions = {
             var new_exp_date = new Date();
             if (moment(req.body.row.expiry_date) < moment()) {
                 new_exp_date = req.body.option === "lifeTime" ? moment().add(1000, 'years') :
-                    req.body.option === "oneYear" ? moment().add(1, 'years') : moment().add(5, 'days');
+                    req.body.option === "oneYear" ? moment().add(1, 'years') :req.body.option === "threeMonths" ? moment().add(3, 'months') : moment().add(5, 'days');
                 //  console.log("new expiry date is:",new_exp_date.format('YYYY-MM-DD'));
             }
             else {
                 new_exp_date = req.body.option === "lifeTime" ? moment(req.body.row.expiry_date).add(1000, 'years') :
-                    req.body.option === "oneYear" ? moment(req.body.row.expiry_date).add(1, 'years') : moment(req.body.row.expiry_date).add(5, 'days');
+                    req.body.option === "oneYear" ? moment(req.body.row.expiry_date).add(1, 'years') :req.body.option === "threeMonths" ? moment(req.body.row.expiry_date).add(3, 'months') : moment(req.body.row.expiry_date).add(5, 'days');
                 // console.log("new expiry date is:",new_exp_date);
             }
             // console.log("new expiry date is:",new_exp_date.format('YYYY-MM-DD'));
@@ -266,12 +266,67 @@ const functions = {
             })
         }
 
-    }
+    },
+    fetchExpiryUpdateLogs:async (req, res) => {
+        var table = req.body.option==='npstock'?"npstockupdatelogs":"systemxliteupdatelogs"
+        try {
+            console.log(table);
+            console.log("Entered fetch log api")
+            const getQuery = `SELECT * FROM ${table};`
+            const [rows, fields] = await connection.query(getQuery);
+            res.json({
+                "success": true,
+                "msg": "successfully fetched expiry date update logs",
+                "rows": JSON.stringify(rows),
+            })
+        }
+        catch (err) {
+            console.log("error occured");
+            res.json({
+                "success": false,
+                "msg": "failed to fetch logs",
+                "err": JSON.stringify(err),
+            })
+        }
+    },
+    addUpdateLog:async (req, res) => {
+        var table = req.body.option==='npstock'?"npstockupdatelogs":"systemxliteupdatelogs"
+        try {
+            var updatedate=moment().format('YYYY-MM-DD')
+            const postQuery = `INSERT INTO manualUpdateLog(updateid,updatedate,updator,username,extendedperiod,package,paymentmethod)
+            VALUES("' + updateid + '", "' + updator + '", "' + username + '", "' + extendedperiod + '", "' + package + '", "' + paymentmethod + '")`
+            const [rows, fields] = await connection.query(postQuery, [updateid,updatedate,updator,username,extendedperiod,package,paymentmethod]);          
+            rows?res.json({
+                "success": true,
+                "msg": "log successfully added",
+                "rows": JSON.stringify(rows),
+                "fields": JSON.stringify(fields)
+            }): res.json({
+                "success": false,
+                "msg": "Error!! failed to add log expiry date",
+                "err": JSON.stringify(err),
+
+            })
+
+
+        }
+        catch (err) {
+            console.log("error occured");
+            res.json({
+                "success": false,
+                "msg": "Error!! failed to add log expiry date",
+                "err": JSON.stringify(err),
+
+            })
+        }
+
+    },
+
 }
 function validateEmail(email) {
     //eslint-disable-next-line
       const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     }
-  
+    
 module.exports = functions;

@@ -3,20 +3,20 @@ import SearchBar from 'material-ui-search-bar'
 
 function MaterialSearchBar(props) {
   const [searchValue, setsearchValue] = useState("");
-  const{userDetails,setuserDetails,database,fetchAllDataByOption,setshowTable}=props;
+  const{rows,setrows,database,fetchAllDataByOption,setshowTable}=props;
 
   //table search based on username and phone number
   const requestSearch = (searchedVal) => {
-    const filteredRows = userDetails.filter((row) => {
+    const filteredRows = rows.filter((row) => {
       return row.username.toLowerCase().includes(searchedVal.toLowerCase()) || row.phone.includes(searchedVal);
     });
-    setuserDetails(filteredRows);
+    setrows(filteredRows);
   };
 
   //handles search cancelation
   const cancelSearch = () => {
     setsearchValue("");
-    setuserDetails("")    
+    setrows("")    
     setshowTable(false);
     fetchAllDataByOption(database);
   }

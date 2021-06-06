@@ -1,5 +1,5 @@
-import { React, useState} from 'react';
-import { Link, Redirect,useHistory} from 'react-router-dom';
+import { React, useState } from 'react';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 // import { connect } from 'react-redux';
 // import PropTypes from 'prop-types';
 // import { withRouter } from 'react-router-dom';
@@ -67,8 +67,8 @@ export default function LogIn() {
   let history = useHistory();
 
   const onchangeHandler = (event) => {
-    const newErr = {...errors};
-    newErr[event.target.name] ="";
+    const newErr = { ...errors };
+    newErr[event.target.name] = "";
     seterror(newErr);
     if (event.target.name === "email") {
       setemail(event.target.value);
@@ -87,13 +87,13 @@ export default function LogIn() {
     }
     else if (password.length < 6) {
       console.log("password not strong");
-      const newErr = {...errors};
+      const newErr = { ...errors };
       newErr["password"] = "password should be of 6+ character";
       seterror(newErr);
       setalertMsg("please enter password 6+ characters long");
       setshowAlert(true);
     }
-    else if (validateEmail(email,errors,seterror)) {
+    else if (validateEmail(email, errors, seterror)) {
       console.log("validaton true")
       const payload = {
         "email": email,
@@ -104,8 +104,12 @@ export default function LogIn() {
         console.log(response.data.success);
         if (response.data.success) {
           console.log("redirect called");
-          history.push('/');
+          history.push('/home');
           // <Redirect to="home" />;
+        }
+        else {
+          setalertMsg(response.data.msg);
+          setshowAlert(true);
         }
       })
     }
@@ -148,7 +152,7 @@ export default function LogIn() {
             value={email}
           />
           {/* {errors ? (<div style={guideStyle}>Enter valid email</div>) : null} */}
-          {errors["email"]? (<div style={guideStyle}>{errors["email"]}</div>):null}
+          {errors["email"] ? (<div style={guideStyle}>{errors["email"]}</div>) : null}
 
           <TextField
             variant="outlined"
@@ -163,7 +167,7 @@ export default function LogIn() {
             value={password}
           />
           {/* {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null} */}
-          {errors["password"]? (<div style={guideStyle}>{errors["password"]}</div>):null}
+          {errors["password"] ? (<div style={guideStyle}>{errors["password"]}</div>) : null}
 
 
           <FormControlLabel

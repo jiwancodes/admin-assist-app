@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react'
-import MaterialAppBar from '../../components/appbar/MaterialAppBar'
+import MaterialAppBar from '../../components/MaterialAppBar'
 // import CombinedTable from '../table/CombinedTable';
-import TableWithPaginationAndSearch from '../table/TableWithPaginationAndSearch'
+import TableWithPaginationAndSearch from '../table/UserDetailsTableWithPaginationAndSearch'
 import axios from '../../axios-order'
 
 // import Table from '../../components/Table'

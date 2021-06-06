@@ -16,9 +16,9 @@ const useStyles2 = makeStyles({
     },
   });
 
-function MaterialTable(props) {
+function MaterialUserDetailTable(props) {
     const classes = useStyles2();
-    const {rowsPerPage,rows,headings,page,database,fetchAllDataByOption}=props;
+    const {rowsPerPage,rows,page,database,fetchAllDataByOption}=props;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
     return (
@@ -26,14 +26,11 @@ function MaterialTable(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-          {headings ?
-            headings.map((i)=><TableCell align="center"><b>{i}</b></TableCell>) :null           
-            }
-            {/* <TableCell align="center"><b>SN</b></TableCell>
+            <TableCell align="center"><b>SN</b></TableCell>
             <TableCell align="center"><b>Username</b></TableCell>
             <TableCell align="center"><b>Phone</b></TableCell>
             <TableCell align="center"><b>Expiry Date</b></TableCell>
-            <TableCell align="center"><b>Update Expiry Date</b></TableCell> */}
+            <TableCell align="center"><b>Update Expiry Date</b></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -60,4 +57,4 @@ function MaterialTable(props) {
     )
 }
 
-export default MaterialTable
+export default MaterialUserDetailTable

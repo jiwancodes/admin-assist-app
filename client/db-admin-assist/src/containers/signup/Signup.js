@@ -1,14 +1,11 @@
 import { React, useState } from 'react';
-// import { connect } from 'react-redux';
-// import PropTypes from 'prop-types';
-// import { withRouter } from 'react-router-dom';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Link,useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
@@ -20,7 +17,7 @@ import validatePassword from '../../validation/validatePassword';
 import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
-import Login from "../login/Login"
+// import Login from "../login/Login"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,8 +50,7 @@ const guideStyle = {
   color: "#f10000"
 };
 
-export default function Signup(props) {
-// function Signup(props) {
+function Signup(props) {
   const classes = useStyles();
   const [username, setusername] = useState("");
   const [email, setemail] = useState("");
@@ -102,7 +98,6 @@ export default function Signup(props) {
         console.log(response.data.success);
         if (response.data.success) {
           // props.history.push("/");
-          console.log("entered but not worked");
           history.push('/login');
           // return <Redirect to={Login} />
         } else {
@@ -148,7 +143,6 @@ export default function Signup(props) {
             onChange={onchangeHandler}
             value={username}
           />
-          {/* {errors ? (<div style={guideStyle}>username must be 3+ characters long</div>) : null} */}
           {errors["username"] ? (<div style={guideStyle}>{errors["username"]}</div>) : null}
 
           <TextField
@@ -164,7 +158,6 @@ export default function Signup(props) {
             onChange={onchangeHandler}
             value={email}
           />
-          {/* {errors ? (<div style={guideStyle}>valid email format example@example.com</div>) : null} */}
           {errors["email"] ? (<div style={guideStyle}>{errors["email"]}</div>) : null}
 
           <TextField
@@ -179,7 +172,6 @@ export default function Signup(props) {
             onChange={onchangeHandler}
             value={password1}
           />
-          {/* {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null} */}
           {errors["password1"] ? (<div style={guideStyle}>{errors["password1"]}</div>) : null}
 
           <TextField
@@ -194,14 +186,13 @@ export default function Signup(props) {
             onChange={onchangeHandler}
             value={password2}
           />
-          {/* {errors ? (<div style={guideStyle}>be sure to match password</div>) : null} */}
           {errors["password2"] ? (<div style={guideStyle}>{errors["password2"]}</div>) : null}
 
 
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             fullWidth
             variant="contained"
@@ -225,24 +216,8 @@ export default function Signup(props) {
           </Grid>
         </form>
       </div>
-      {/* <Box mt={8}>
-         <Copyright /> 
-      </Box> */}
     </Container>
   );
 }
-// Signup.propTypes = {
-//   registerUser: PropTypes.func.isRequired,
-//   auth: PropTypes.object.isRequired,
-//   errors: PropTypes.object.isRequired
-// };
 
-// const mapStateToProps = state => ({
-//   auth: state.auth,
-//   errors: state.errors
-// });
-
-
-// export default connect(mapStateToProps)(withRouter(Signup));
-// export default connect(mapStateToProps, {registerUser})(withRouter(Signup));
-// export default (withRouter(Signup));
+export default Signup;

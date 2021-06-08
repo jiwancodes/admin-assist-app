@@ -1,14 +1,12 @@
-import { React, useState } from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
-// import { connect } from 'react-redux';
-// import PropTypes from 'prop-types';
-// import { withRouter } from 'react-router-dom';
+import { React, useState, useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import Checkbox from '@material-ui/core/Checkbox';
 // import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -20,8 +18,9 @@ import isEmpty from '../../validation/is-empty';
 import validateEmail from '../../validation/validateEmail';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
-// import {Redirect } from 'react-router-dom';
-// import SignUp from '../signup/Signup';
+import jwt_decode from 'jwt-decode';
+
+
 
 
 const useSomeStyles = makeStyles((theme) => ({
@@ -57,14 +56,20 @@ const guideStyle = {
   color: "#f10000"
 };
 
-export default function LogIn() {
+function LogIn(props) {
   const classes = useSomeStyles();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
   const [errors, seterror] = useState("");
+  // const [isAuthenticated, setisAuthenticated] = useState(props.isAuthenticated);
   let history = useHistory();
+
+
+  // useEffect(() => {
+  //   if (isAuthenticated) { history.push('/home'); }
+  // }, []);
 
   const onchangeHandler = (event) => {
     const newErr = { ...errors };
@@ -103,9 +108,16 @@ export default function LogIn() {
         console.log(response.data);
         console.log(response.data.success);
         if (response.data.success) {
+          localStorage.setItem('jwtToken', response.data.token);
+          localStorage.setItem('authenticated',true);
+          var decoded = jwt_decode(response.data.token);
+          console.log("decoded email", decoded.newUser);
+          props.storeUser(decoded.newUser);
+          props.storetoken(response.data.token);
+
+          // setisAuthenticated(true);
           console.log("redirect called");
-          history.push('/home');
-          // <Redirect to="home" />;
+         history.push('/Manualupdate');
         }
         else {
           setalertMsg(response.data.msg);
@@ -170,10 +182,10 @@ export default function LogIn() {
           {errors["password"] ? (<div style={guideStyle}>{errors["password"]}</div>) : null}
 
 
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             fullWidth
             variant="contained"
@@ -190,7 +202,7 @@ export default function LogIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link to="/">
+              <Link to="/signup">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -203,3 +215,18 @@ export default function LogIn() {
     </Container>
   );
 }
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.isAuthenticated,
+  user: state.user
+});
+const mapDispatchToProps = (dispatch) => {
+  return {
+    storeUser: (user) => {
+      console.log("user in dispatch", user);
+      dispatch({ "type": 'SET_USER', "payload": user })
+    },
+    storetoken: (token) => { dispatch({ "type": 'SET_TOKEN', "payload": token }) },
+
+  }
+};
+export default connect(mapStateToProps, mapDispatchToProps)(LogIn);

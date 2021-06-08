@@ -12,7 +12,7 @@ import BootstrapModal from './BootstrapModal';
 
 const useStyles2 = makeStyles({
     table: {
-      minWidth: 500,
+      // minWidth: 500,
     },
   });
 

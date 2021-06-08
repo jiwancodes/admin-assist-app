@@ -14,7 +14,7 @@
   }
   .searchBarWrapper {
     width: 100%;
-    min-width: 1000px;
+    /* min-width: 1000px; */
     display: flex;
     flex-direction: row;
     margin-bottom: 5px;

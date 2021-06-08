@@ -1,12 +1,12 @@
 import { React, useEffect, useState } from "react"
-import MaterialAppBar from '../../components/MaterialAppBar'
+import { connect } from 'react-redux';
 import UpdateLogTableWithPaginationAndSearch from '../table/UpdateLogTableWithPaginationAndSearch'
 import axios from '../../axios-order'
-
-function ViewUpdateLogs() {
+import MaterialAppBar from '../../components/MaterialAppBar'
+function ViewUpdateLogs(props) {
     const [showTable, setshowTable] = useState(false);
     const [rows, setrows] = useState("");
-    const [database, setdatabase] = useState("npstock");
+    const [database, setdatabase] = useState(props.database);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     // const headings = ["SN", "Extension Date", "Username", "Extended Period", "Payment Method","Updator"];
@@ -29,18 +29,17 @@ function ViewUpdateLogs() {
     }, [])
 
     //switches tables based on option for fetching users of npstock and systemxlite
-    const fetchAllDataByOption = (option) => {
+    const fetchAllUpdateLogsByDatabase = (database) => {
         console.log("fetche data called");
         let payload={
-            "option":option
+            "option":database
         };
         axios.post(`/updatelogs`,payload).then((response) => {
-            // console.log("here are rows");
-            // console.log(response.data.rows);
+          console.log("called update logs");
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
-            setshowTable(true);
         })
+        console.log(rows);
     }
 
     return (
@@ -48,7 +47,7 @@ function ViewUpdateLogs() {
             <MaterialAppBar
                 database={database}
                 setdatabase={setdatabase}
-                fetchAllDataByOption={fetchAllDataByOption}
+                fetchAllDataByOption={fetchAllUpdateLogsByDatabase}
             />
 
             <UpdateLogTableWithPaginationAndSearch
@@ -58,7 +57,7 @@ function ViewUpdateLogs() {
                 setrows={setrows}
                 setPage={setPage}
                 page={page} database={database}
-                fetchAllDataByOption={fetchAllDataByOption}
+                fetchAllDataByOption={fetchAllUpdateLogsByDatabase}
                 setshowTable={setshowTable}
                 showTable={showTable}
             />
@@ -66,5 +65,23 @@ function ViewUpdateLogs() {
         </div>
     )
 }
+const mapStateToProps = (state) => ({
+    // isAuthenticated: state.isAuthenticated,
+    // // user: state.user,
+    database:state.database,
+  
+  });
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      storeUser: (user) => {
+        console.log("user in dispatch", user);
+        dispatch({ "type": 'SET_USER', "payload": user })
+      },
+      storetoken: (token) => { dispatch({ "type": 'SET_TOKEN', "payload": token }) },
+      storedatabase: (database) => { dispatch({ "type": 'SET_DATABASE', "payload": database }) },
+  
+    }
+  };
+  export default connect(mapStateToProps, mapDispatchToProps)(ViewUpdateLogs);
 
-export default ViewUpdateLogs
+// export default ViewUpdateLogs

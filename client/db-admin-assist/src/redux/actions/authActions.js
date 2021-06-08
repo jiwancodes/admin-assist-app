@@ -1,9 +1,3 @@
-import {
-    GET_ERRORS,
-    SET_USER,
-    ALERT_REGISTRATION,
-    HIDE_REGMODAL
- } from './types';
  import setAuthToken from '../../utils/setAuthToken';
  import jwt_decode from 'jwt-decode';
 //  import axios from 'axios';
@@ -17,13 +11,13 @@ import {
        .then(res => {
              history.push('/login');
              return dispatch({
-                type: ALERT_REGISTRATION,
+                type: "ALERT_REGISTRATION",
                 payload: res.data.name
              });
           }
        )
        .catch(err => dispatch({
-          type: GET_ERRORS,
+          type: "GET_ERRORS",
           payload: err.response.data})
        );
  
@@ -33,39 +27,37 @@ import {
  //Hide registration modal
  export const hideRegModal = () => dispatch =>
     dispatch({
-       type: HIDE_REGMODAL,
+       type: "HIDE_REGMODAL",
        payload: null
     });
  
  
  //Login
- export const loginUser = (userData) => dispatch => {
-    axios
-       .post('api/users/login', userData)
+ export const loginUser = (payload) => dispatch => {
+    console.log("login called");
+      axios.post('/login', payload)
        .then(res => {
-          const { token } = res.data;
+          const { token } = res.data.token;
           //Save token to local storage
           localStorage.setItem('jwtToken', token);
           //Set Auth header
           setAuthToken(token);
           //Decode token to get current user data
           const decoded = jwt_decode(token);
- 
           return dispatch(setUser(decoded));
- 
        })
        .catch(err =>
           dispatch({
-             type: GET_ERRORS,
+             type: "GET_ERRORS",
              payload: err.response.data})
        );
  };
+
  
- 
- //set user function
+ //decode tokenset user function
  export const setUser = (decoded) => {
     return {
-       type: SET_USER,
+       type: "SET_USER",
        payload: decoded
     };
  };

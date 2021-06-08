@@ -3,7 +3,7 @@ const config = require('../config/config');
 // var jwt = require('jwt-simple')
 var JwtStrategy = require('passport-jwt').Strategy
 var ExtractJwt = require('passport-jwt').ExtractJwt
-const jwt = require('jsonwebtoken');    
+const jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 const moment = require('moment');
 const saltRounds = 10;
@@ -31,12 +31,12 @@ const functions = {
         const username = req.body.username;
         const email = req.body.email;
         var password = req.body.password;
-        if(!validateEmail(email)){
+        if (!validateEmail(email)) {
             return res.status(403).json({
                 "success": false,
                 "msg": "Invalid Email"
             });
-        } else if(username===null||email===null||password==null){
+        } else if (username === null || email === null || password == null) {
             return res.status(403).json({
                 "success": false,
                 "msg": "Empty form fills"
@@ -102,7 +102,7 @@ const functions = {
                         var newUser = user[0];
                         delete newUser['password']
                         console.log(newUser)
-                        var token = jwt.sign({newUser}, config.secret, { expiresIn: 300 });
+                        var token = jwt.sign({ newUser }, config.secret, { expiresIn: 300 });
                         console.log("token is :", token);
                         res.json({
                             success: true,
@@ -121,9 +121,10 @@ const functions = {
             }
             else {
                 console.log("user not found");
-                res.status(403).send({
-                     success: false, 
-                     msg: "Authentication failed, User not found" })
+                res.json({
+                    success: false,
+                    msg: "Authentication failed, User not found"
+                })
             }
 
         } catch (err) {
@@ -138,7 +139,7 @@ const functions = {
     passportStrategy: async (passport) => {
         var opts = {}
         opts.secretOrKey = config.secret,
-        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
+            opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
         console.log("here i am");
         passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
             console.log(jwt_payload);
@@ -148,10 +149,13 @@ const functions = {
 
     },
     getUserInfoFromToken: function (req, res) {
-        console.log(req.headers);
-        if (req.headers.authorization && req.headers.authorization.split(" ")[0] == 'Bearer') {
-            var token = req.headers.authorization.split(" ")[1]
+        // console.log("header is",req.headers.authorization);
+        if (req.headers.authorization && req.headers.authorization.split("_")[0] == 'Bearer') {
+            var token = req.headers.authorization.split("_")[1]
+            console.log(" token is", token);
             try {
+                var decoded = jwt.decode(token);
+                console.log("decoded is ", decoded);
                 var decodedToken = jwt.verify(token, config.secret);
                 console.log(decodedToken);
                 res.json({
@@ -159,21 +163,21 @@ const functions = {
                     "token": decodedToken,
                     "msg": "hello" + decodedToken.username,
                 })
-              } catch(err) {
-                  console.log(err);
-                  res.json({
+            } catch (err) {
+                console.log(err);
+                res.json({
                     "success": false,
                     "msg": "Invalid token",
-                    "error":err
+                    "error": err
                 })
                 // err
-              }
-        //     var decodedToken = jwt.decode(token, config.secret)
-        //     return res.json({
-        //         success: true,
-        //         token: decodedToken,
-        //         msg: "hello" + decodedToken.email,
-        //     })
+            }
+            //     var decodedToken = jwt.decode(token, config.secret)
+            //     return res.json({
+            //         success: true,
+            //         token: decodedToken,
+            //         msg: "hello" + decodedToken.email,
+            //     })
         }
         else {
             console.log(req.headers.authorization.split(" ")[0]);
@@ -228,36 +232,71 @@ const functions = {
     },
     //Api callback function to update expiry date based on various constraints
     addExpiryDate: async (req, res) => {
+        console.log(req.body);
         try {
             console.log("Entered edit exp date api")
-            const table = req.body.database === "npstock" ? "login" : "loginsystemxlt";
+            const userTable = req.body.database === "npstock" ? "login" : "loginsystemxlt";
+            const logTable = req.body.database === "npstock" ? "npstockupdatelogs" : "systemxliteupdatelogs";
+            console.log("logtable is ", logTable);
             const id = req.body.database === "npstock" ? "idlogin" : "idloginsystemxlt";
             var new_exp_date = new Date();
             if (moment(req.body.row.expiry_date) < moment()) {
                 new_exp_date = req.body.option === "lifeTime" ? moment().add(1000, 'years') :
-                    req.body.option === "oneYear" ? moment().add(1, 'years') :req.body.option === "threeMonths" ? moment().add(3, 'months') : moment().add(5, 'days');
+                    req.body.option === "oneYear" ? moment().add(1, 'years') : req.body.option === "threeMonths" ? moment().add(3, 'months') : moment().add(5, 'days');
                 //  console.log("new expiry date is:",new_exp_date.format('YYYY-MM-DD'));
             }
             else {
                 new_exp_date = req.body.option === "lifeTime" ? moment(req.body.row.expiry_date).add(1000, 'years') :
-                    req.body.option === "oneYear" ? moment(req.body.row.expiry_date).add(1, 'years') :req.body.option === "threeMonths" ? moment(req.body.row.expiry_date).add(3, 'months') : moment(req.body.row.expiry_date).add(5, 'days');
+                    req.body.option === "oneYear" ? moment(req.body.row.expiry_date).add(1, 'years') : req.body.option === "threeMonths" ? moment(req.body.row.expiry_date).add(3, 'months') : moment(req.body.row.expiry_date).add(5, 'days');
                 // console.log("new expiry date is:",new_exp_date);
             }
             // console.log("new expiry date is:",new_exp_date.format('YYYY-MM-DD'));
-            const postQuery = `UPDATE ${table} SET expiry_date=? WHERE ${id}=?`
+            const postQuery = `UPDATE ${userTable} SET expiry_date=? WHERE ${id}=?`
             const [rows, fields] = await connection.query(postQuery, [new_exp_date.format('YYYY-MM-DD'), req.body.row.idlogin]);
-            res.json({
-                "success": true,
-                "msg": "Expiry date successfully extended",
-                "rows": JSON.stringify(rows),
-                "fields": JSON.stringify(fields)
-            })
+            if (rows) {
+                let updatedate = new Date();
+                updatedate=moment().format('YYYY-MM-DD');
+                console.log(updatedate);
+                let updator=req.body.updator;
+                let username=req.body.row.username;
+                let package = req.body.option;
+                let paymentmethod=req.body.paymentmethod;
+                console.log("entered in insert log");
+                // var logQuery=`INSERT INTO ${logTable}(updatedate,updator,username,package,paymentmethod)VALUES(${updatedate},${updator},${username},${package},${paymentmethod})`;
 
 
+                // var logQuery=`INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES(" '+updator+'", "' + username + '","' + package + '", "' + paymentmethod + '")`;
+                // const payload = [updator,username,package,paymentmethod];
+                // console.log("payload is ", payload);
+                // const [logrows, logfields] = await connection.query(logQuery);
+                // var [logrows, logfields] = await connection.query('INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES("' + updator + '", "' + username + '", "' + package + '"", "' + paymentmethod + '")',[updator,username,package,paymentmethod]);
+                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES(?, ?, ?, ?)`,[updator,username,package,paymentmethod]);
+                if(logrows){
+                    res.json({
+                        "success": true,
+                        "msg": "Expiry date successfully extended",
+                        "rows": JSON.stringify(rows),
+                        "logrows": logrows
+                    })
+                }
+                else{
+                    const postQuery = `UPDATE ${userTable} SET expiry_date=? WHERE ${id}=?`                    
+                    const [rows, fields] = await connection.query(postQuery, [new_exp_date.format('YYYY-MM-DD'), req.body.row.idlogin]);
+                    if(rows){
+                        res.json({
+                            "msg":"failed to update log"
+                        })
+                    }
+
+
+                }
+               
+            }
 
         }
         catch (err) {
             console.log("error occured");
+            console.log(err);
             res.json({
                 "success": false,
                 "msg": "Error!! failed to extend expiry date",
@@ -267,12 +306,12 @@ const functions = {
         }
 
     },
-    fetchExpiryUpdateLogs:async (req, res) => {
-        var table = req.body.option==='npstock'?"npstockupdatelogs":"systemxliteupdatelogs"
+    fetchExpiryUpdateLogs: async (req, res) => {
+        var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
         try {
             console.log(table);
             console.log("Entered fetch log api")
-            const getQuery = `SELECT * FROM ${table};`
+            const getQuery = `SELECT updateid,Date_Format(updatedate,'%Y-%m-%d')as updatedate,updator,username,package,paymentmethod FROM ${table};`
             const [rows, fields] = await connection.query(getQuery);
             res.json({
                 "success": true,
@@ -289,19 +328,19 @@ const functions = {
             })
         }
     },
-    addUpdateLog:async (req, res) => {
-        var table = req.body.option==='npstock'?"npstockupdatelogs":"systemxliteupdatelogs"
+    addUpdateLog: async (req, res) => {
+        var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
         try {
-            var updatedate=moment().format('YYYY-MM-DD')
+            var updatedate = moment().format('YYYY-MM-DD')
             const postQuery = `INSERT INTO manualUpdateLog(updateid,updatedate,updator,username,extendedperiod,package,paymentmethod)
             VALUES("' + updateid + '", "' + updator + '", "' + username + '", "' + extendedperiod + '", "' + package + '", "' + paymentmethod + '")`
-            const [rows, fields] = await connection.query(postQuery, [updateid,updatedate,updator,username,extendedperiod,package,paymentmethod]);          
-            rows?res.json({
+            const [rows, fields] = await connection.query(postQuery, [updateid, updatedate, updator, username, extendedperiod, package, paymentmethod]);
+            rows ? res.json({
                 "success": true,
                 "msg": "log successfully added",
                 "rows": JSON.stringify(rows),
                 "fields": JSON.stringify(fields)
-            }): res.json({
+            }) : res.json({
                 "success": false,
                 "msg": "Error!! failed to add log expiry date",
                 "err": JSON.stringify(err),
@@ -325,8 +364,8 @@ const functions = {
 }
 function validateEmail(email) {
     //eslint-disable-next-line
-      const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    }
-    
+    const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
 module.exports = functions;

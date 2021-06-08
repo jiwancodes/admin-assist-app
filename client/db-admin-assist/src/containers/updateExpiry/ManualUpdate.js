@@ -1,13 +1,10 @@
-import { React, useEffect, useState } from "react"
+import { React, useEffect, useState,Fragment } from "react"
 import { connect } from 'react-redux';
-import MaterialAppBar from '../../components/MaterialAppBar'
 import UserDetailsTableWithPaginationAndSearch from '../table/UserDetailsTableWithPaginationAndSearch'
 import axios from '../../axios-order'
 
 function UpdateExpiryPage(props) {
-    const [showTable, setshowTable] = useState(false);
     const [rows, setrows] = useState("");
-    const [database, setdatabase] = useState(props.database);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -20,14 +17,12 @@ function UpdateExpiryPage(props) {
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
-            // console.log(rows);
-            setshowTable(true);
         })
 
     }, [])
 
     //switches tables based on option for fetching users of npstock and systemxlite
-    const fetchAllUserDataByDatabase = (database) => {
+    const fetchAllDataByOption = (database) => {
         console.log("fetche data called");
         axios.get(`/user/details/${database}`).then((response) => {
             // console.log("here are rows");
@@ -39,13 +34,7 @@ function UpdateExpiryPage(props) {
 
 
     return (
-        <div>
-            <MaterialAppBar
-                database={props.database}
-                setdatabase={setdatabase}
-                fetchAllDataByOption={fetchAllUserDataByDatabase}
-            />
-
+       <Fragment>
             <UserDetailsTableWithPaginationAndSearch
                 rowsPerPage={rowsPerPage}
                 setRowsPerPage={setRowsPerPage}
@@ -54,20 +43,17 @@ function UpdateExpiryPage(props) {
                 headings={headings} setPage={setPage}
                 page={page} 
                 database={props.database}
-                fetchAllDataByOption={fetchAllUserDataByDatabase}
-                setshowTable={setshowTable}
-                showTable={showTable}
+                fetchAllDataByOption={fetchAllDataByOption}
             />
-
-        </div>
+            </Fragment>
     )
 }
 
 // export default UpdateExpiryPage
 const mapStateToProps = (state) => ({
-    // isAuthenticated: state.isAuthenticated,
-    // // user: state.user,
-    database:state.database,
+    isAuthenticated: state.isAuthenticated,
+    // user: state.user,
+    // database:state.database,
   
   });
   const mapDispatchToProps = (dispatch) => {

@@ -7,15 +7,15 @@ import './UserDetailsTableWithPaginationAndSearch.css'
 
 
 function UserDetailsTableWithPaginationAndSearch(props) {
-    const { rowsPerPage, setRowsPerPage, rows, setrows, headings, setPage, page, database, fetchAllDataByOption, setshowTable,showTable } = props;
+    const { rowsPerPage, setRowsPerPage, rows, setrows, headings, setPage, page, database, fetchAllDataByOption} = props;
 
     return (
         <div className="container">
-            {showTable?
+            {rows!==""?
             <div>
                 <div className="searchBarWrapper" >
                     <MaterialTablePagination rows={rows} page={page} setPage={setPage} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} />
-                    <MaterialSearchBar rows={rows} setrows={setrows} database={database} fetchAllDataByOption={fetchAllDataByOption} setshowTable={setshowTable} />
+                    <MaterialSearchBar rows={rows} setrows={setrows} database={database} fetchAllDataByOption={fetchAllDataByOption} />
                 </div>
                 <div className="tableWrapper" >
                     <MaterialUserDetailTable rowsPerPage={rowsPerPage} headings={headings} page={page} rows={rows} database={database} fetchAllDataByOption={fetchAllDataByOption} />

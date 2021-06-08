@@ -12,12 +12,12 @@ import Paper from '@material-ui/core/Paper';
 
 const useStyles2 = makeStyles({
     table: {
-        minWidth: 500,
+        // minWidth: 500,
     },
 });
 function MaterialUpdateLogTable(props) {
     const classes = useStyles2();
-    const { rowsPerPage, rows, page, database, fetchAllDataByOption } = props;
+    const { rowsPerPage, rows, page} = props;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     const headings = ["SN", "Extension Date", "Username", "Extended Period", "Payment Method", "Updator"];
 

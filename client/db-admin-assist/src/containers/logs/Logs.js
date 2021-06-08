@@ -1,21 +1,20 @@
-import { React, useEffect, useState } from "react"
+import { Fragment, React, useEffect, useState } from "react"
 import { connect } from 'react-redux';
-import MaterialAppBar from '../../components/MaterialAppBar'
-import UserDetailsTableWithPaginationAndSearch from '../table/UserDetailsTableWithPaginationAndSearch'
+import UpdateLogTableWithPaginationAndSearch from '../table/UpdateLogTableWithPaginationAndSearch'
 import axios from '../../axios-order'
 
-function UpdateExpiryPage(props) {
+function ViewUpdateLogs(props) {
     const [showTable, setshowTable] = useState(false);
     const [rows, setrows] = useState("");
-    const [database, setdatabase] = useState(props.database);
+    // const [database, setdatabase] = useState(props.database);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
-    const headings = ["SN", "Username", "Phone", "Expiry Date", "Update Expiry Date"];
-
-    //fetches data for npstock users just once after initial render  
     useEffect(() => {
-        axios.get(`/user/details/${props.database}`).then((response) => {
+        console.log("use effect called");
+        let payload={
+            "option":props.database
+        };
+        axios.post(`/updatelogs`,payload).then((response) => {
             console.log("here is response message", response.data.msg);
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);
@@ -27,47 +26,40 @@ function UpdateExpiryPage(props) {
     }, [])
 
     //switches tables based on option for fetching users of npstock and systemxlite
-    const fetchAllUserDataByDatabase = (database) => {
+    const fetchAllDataByOption = (option) => {
         console.log("fetche data called");
-        axios.get(`/user/details/${database}`).then((response) => {
+        let payload={
+            "option":option
+        };
+        axios.post(`/updatelogs`,payload).then((response) => {
             // console.log("here are rows");
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
+            setshowTable(true);
         })
     }
 
-
     return (
-        <div>
-            <MaterialAppBar
-                database={props.database}
-                setdatabase={setdatabase}
-                fetchAllDataByOption={fetchAllUserDataByDatabase}
-            />
-
-            <UserDetailsTableWithPaginationAndSearch
+        <Fragment>
+            <UpdateLogTableWithPaginationAndSearch
                 rowsPerPage={rowsPerPage}
                 setRowsPerPage={setRowsPerPage}
                 rows={rows}
                 setrows={setrows}
-                headings={headings} setPage={setPage}
-                page={page} 
-                database={props.database}
-                fetchAllDataByOption={fetchAllUserDataByDatabase}
+                setPage={setPage}
+                page={page} database={props.database}
+                fetchAllDataByOption={fetchAllDataByOption}
                 setshowTable={setshowTable}
                 showTable={showTable}
-            />
-
-        </div>
+            />            
+            </Fragment>
     )
 }
-
-// export default UpdateExpiryPage
 const mapStateToProps = (state) => ({
-    // isAuthenticated: state.isAuthenticated,
+    isAuthenticated: state.isAuthenticated,
     // // user: state.user,
-    database:state.database,
+    // database:state.database,
   
   });
   const mapDispatchToProps = (dispatch) => {
@@ -81,4 +73,6 @@ const mapStateToProps = (state) => ({
   
     }
   };
-  export default connect(mapStateToProps, mapDispatchToProps)(UpdateExpiryPage);
+  export default connect(mapStateToProps, mapDispatchToProps)(ViewUpdateLogs);
+
+// export default ViewUpdateLogs

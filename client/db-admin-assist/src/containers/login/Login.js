@@ -1,6 +1,6 @@
-import { React, useState, useEffect } from 'react';
+import { React, useState} from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,7 +18,11 @@ import isEmpty from '../../validation/is-empty';
 import validateEmail from '../../validation/validateEmail';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
-import jwt_decode from 'jwt-decode';
+// import jwt_decode from 'jwt-decode';
+// import CryptoAES from 'crypto-js/aes';
+
+import {encryptAndStoreTokenAndUserName} from '../../methods/actions'
+
 
 
 
@@ -63,13 +67,8 @@ function LogIn(props) {
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
   const [errors, seterror] = useState("");
-  // const [isAuthenticated, setisAuthenticated] = useState(props.isAuthenticated);
   let history = useHistory();
 
-
-  // useEffect(() => {
-  //   if (isAuthenticated) { history.push('/home'); }
-  // }, []);
 
   const onchangeHandler = (event) => {
     const newErr = { ...errors };
@@ -108,15 +107,15 @@ function LogIn(props) {
         console.log(response.data);
         console.log(response.data.success);
         if (response.data.success) {
-          localStorage.setItem('jwtToken', response.data.token);
-          localStorage.setItem('authenticated',true);
-          var decoded = jwt_decode(response.data.token);
-          console.log("decoded email", decoded.newUser);
-          props.storeUser(decoded.newUser);
-          props.storetoken(response.data.token);
-
-          // setisAuthenticated(true);
-          console.log("redirect called");
+          encryptAndStoreTokenAndUserName(response.data.token);
+          // var ciphertext = CryptoAES.encrypt(response.data.token, 'fafhao#4fa');
+          // console.log(ciphertext);
+          // localStorage.setItem('jwtToken', ciphertext);
+          // localStorage.setItem('authenticated',true);
+          // localStorage.setItem('user',decoded.newUser.username);
+          // console.log("decoded email", decoded.newUser.username);
+          // var decoded = jwt_decode(response.data.token);
+          // props.storeUser(decoded.newUser);
          history.push('/Manualupdate');
         }
         else {
@@ -163,7 +162,6 @@ function LogIn(props) {
             onChange={onchangeHandler}
             value={email}
           />
-          {/* {errors ? (<div style={guideStyle}>Enter valid email</div>) : null} */}
           {errors["email"] ? (<div style={guideStyle}>{errors["email"]}</div>) : null}
 
           <TextField
@@ -178,7 +176,6 @@ function LogIn(props) {
             onChange={onchangeHandler}
             value={password}
           />
-          {/* {errors ? (<div style={guideStyle}>password must be 6+ characters long</div>) : null} */}
           {errors["password"] ? (<div style={guideStyle}>{errors["password"]}</div>) : null}
 
 
@@ -215,18 +212,14 @@ function LogIn(props) {
     </Container>
   );
 }
-const mapStateToProps = (state) => ({
-  isAuthenticated: state.isAuthenticated,
-  user: state.user
-});
-const mapDispatchToProps = (dispatch) => {
-  return {
-    storeUser: (user) => {
-      console.log("user in dispatch", user);
-      dispatch({ "type": 'SET_USER', "payload": user })
-    },
-    storetoken: (token) => { dispatch({ "type": 'SET_TOKEN', "payload": token }) },
-
-  }
-};
-export default connect(mapStateToProps, mapDispatchToProps)(LogIn);
+// const mapStateToProps = (state) => ({
+//   isAuthenticated: state.isAuthenticated,
+//   user: state.user
+// });
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     storeUser: (user) => {dispatch({ "type": 'SET_USER', "payload": user })}
+//   }
+// };
+// export default connect(mapStateToProps, mapDispatchToProps)(LogIn);
+export default LogIn;

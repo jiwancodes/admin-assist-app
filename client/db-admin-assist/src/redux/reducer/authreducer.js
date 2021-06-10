@@ -3,8 +3,7 @@ import isEmpty from '../../validation/is-empty';
 const initialState = {
    database:"npstock",
    isAuthenticated:localStorage.getItem('authenticated'),
-   // token:'',
-   user:'',
+   user:localStorage.getItem('user'),
 
 };
 

@@ -102,7 +102,9 @@ const functions = {
                         var newUser = user[0];
                         delete newUser['password']
                         console.log(newUser)
-                        var token = jwt.sign({ newUser }, config.secret, { expiresIn: 300 });
+                        var token = jwt.sign({ newUser }, config.secret, 
+                            { expiresIn: 1200 }
+                            );
                         console.log("token is :", token);
                         res.json({
                             success: true,
@@ -146,45 +148,23 @@ const functions = {
             return done(null, false);
         })
         );
-
     },
-    getUserInfoFromToken: function (req, res) {
-        // console.log("header is",req.headers.authorization);
-        if (req.headers.authorization && req.headers.authorization.split("_")[0] == 'Bearer') {
-            var token = req.headers.authorization.split("_")[1]
+    authenticateToken: function (req, res, next) {
+        if (req.headers.authorization && req.headers.authorization.split(" ")[0] == 'Bearer') {
+            var token = req.headers.authorization.split(" ")[1];
             console.log(" token is", token);
-            try {
-                var decoded = jwt.decode(token);
-                console.log("decoded is ", decoded);
-                var decodedToken = jwt.verify(token, config.secret);
-                console.log(decodedToken);
-                res.json({
-                    "success": true,
-                    "token": decodedToken,
-                    "msg": "hello" + decodedToken.username,
-                })
-            } catch (err) {
-                console.log(err);
-                res.json({
-                    "success": false,
-                    "msg": "Invalid token",
-                    "error": err
-                })
-                // err
-            }
-            //     var decodedToken = jwt.decode(token, config.secret)
-            //     return res.json({
-            //         success: true,
-            //         token: decodedToken,
-            //         msg: "hello" + decodedToken.email,
-            //     })
+            if (token == null) return res.sendStatus(401);
+            jwt.verify(token, config.secret, (err, user) => {
+                console.log(err)
+                if (err) return res.sendStatus(403)
+
+                req.user = user
+
+                next()
+            })
         }
         else {
-            console.log(req.headers.authorization.split(" ")[0]);
-            return res.json({
-                success: false,
-                msg: "no headers"
-            })
+            return res.sendStatus(401)
         }
 
     },
@@ -255,23 +235,15 @@ const functions = {
             const [rows, fields] = await connection.query(postQuery, [new_exp_date.format('YYYY-MM-DD'), req.body.row.idlogin]);
             if (rows) {
                 let updatedate = new Date();
-                updatedate=moment().format('YYYY-MM-DD');
+                updatedate = moment().format('YYYY-MM-DD');
                 console.log(updatedate);
-                let updator=req.body.updator;
-                let username=req.body.row.username;
+                let updator = req.body.updator;
+                let username = req.body.row.username;
                 let package = req.body.option;
-                let paymentmethod=req.body.paymentmethod;
+                let paymentmethod = req.body.paymentmethod;
                 console.log("entered in insert log");
-                // var logQuery=`INSERT INTO ${logTable}(updatedate,updator,username,package,paymentmethod)VALUES(${updatedate},${updator},${username},${package},${paymentmethod})`;
-
-
-                // var logQuery=`INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES(" '+updator+'", "' + username + '","' + package + '", "' + paymentmethod + '")`;
-                // const payload = [updator,username,package,paymentmethod];
-                // console.log("payload is ", payload);
-                // const [logrows, logfields] = await connection.query(logQuery);
-                // var [logrows, logfields] = await connection.query('INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES("' + updator + '", "' + username + '", "' + package + '"", "' + paymentmethod + '")',[updator,username,package,paymentmethod]);
-                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES(?, ?, ?, ?)`,[updator,username,package,paymentmethod]);
-                if(logrows){
+                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES(?, ?, ?, ?)`, [updator, username, package, paymentmethod]);
+                if (logrows) {
                     res.json({
                         "success": true,
                         "msg": "Expiry date successfully extended",
@@ -279,18 +251,18 @@ const functions = {
                         "logrows": logrows
                     })
                 }
-                else{
-                    const postQuery = `UPDATE ${userTable} SET expiry_date=? WHERE ${id}=?`                    
+                else {
+                    const postQuery = `UPDATE ${userTable} SET expiry_date=? WHERE ${id}=?`
                     const [rows, fields] = await connection.query(postQuery, [new_exp_date.format('YYYY-MM-DD'), req.body.row.idlogin]);
-                    if(rows){
+                    if (rows) {
                         res.json({
-                            "msg":"failed to update log"
+                            "msg": "failed to update log"
                         })
                     }
 
 
                 }
-               
+
             }
 
         }
@@ -311,7 +283,7 @@ const functions = {
         try {
             console.log(table);
             console.log("Entered fetch log api")
-            const getQuery = `SELECT updateid,Date_Format(updatedate,'%Y-%m-%d')as updatedate,updator,username,package,paymentmethod FROM ${table};`
+            const getQuery = `SELECT updateid,Date_Format(updatedate,'%Y-%m-%d')as updatedate,updator,username,package,paymentmethod FROM ${table} ORDER BY updateid DESC ;`
             const [rows, fields] = await connection.query(getQuery);
             res.json({
                 "success": true,
@@ -328,6 +300,8 @@ const functions = {
             })
         }
     },
+
+    // is is not used as log insert is included with update expiry date
     addUpdateLog: async (req, res) => {
         var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
         try {
@@ -344,10 +318,7 @@ const functions = {
                 "success": false,
                 "msg": "Error!! failed to add log expiry date",
                 "err": JSON.stringify(err),
-
             })
-
-
         }
         catch (err) {
             console.log("error occured");
@@ -367,5 +338,14 @@ function validateEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+
+const isEmpty = (value) => {
+    return (
+        value === undefined ||
+        value === null ||
+        (typeof value === 'object' && Object.keys(value).length === 0) ||
+        (typeof value === 'string' && value.trim().length === 0)
+    );
+};
 
 module.exports = functions;

@@ -28,11 +28,6 @@ function MaterialUpdateLogTable(props) {
                 <TableHead>
                     <TableRow>
                         {headings.map((i) => <TableCell align="center"><b>{i}</b></TableCell>)}
-                        {/* <TableCell align="center"><b>SN</b></TableCell>
-            <TableCell align="center"><b>Username</b></TableCell>
-            <TableCell align="center"><b>Phone</b></TableCell>
-            <TableCell align="center"><b>Expiry Date</b></TableCell>
-            <TableCell align="center"><b>Update Expiry Date</b></TableCell> */}
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -25,7 +25,7 @@ function BootstrapModal(props) {
   const [submitting, setSubmitting] = React.useState(false);
   const [response, setresponse] = React.useState(false);
   const [responseData, setresponseData] = React.useState(false);
-  const [paymentMethod, setpaymentMethod] = React.useState("esewa");
+  const [paymentMethod, setpaymentMethod] = React.useState("Connectips");
 
 
 
@@ -53,11 +53,12 @@ function BootstrapModal(props) {
 
   const onModalSubmit = () => {
     setSubmitting(true);
+    let updator= localStorage.getItem('user');
     const payload = {
       "option": extensionOption,
       "database": props.database,
       "row": props.row,
-      "updator":props.user.username,
+      "updator":updator,
       "paymentmethod":paymentMethod
     };
     console.log(payload);

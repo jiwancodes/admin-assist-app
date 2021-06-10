@@ -3,7 +3,7 @@ import axios from '../axios-order';
 const setAuthToken = (token) => {
    if (token) {
       //Apply to every request
-      axios.defaults.headers.common['Authorization'] = token;
+      axios.defaults.headers.common['Authorization'] =token;
    } else {
       //Delete the auth header
       delete axios.defaults.headers.common['Authorization'];

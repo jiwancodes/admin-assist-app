@@ -1,15 +1,16 @@
 import {React,useState} from 'react'
 import SearchBar from 'material-ui-search-bar'
+// import { connect } from 'react-redux';
 
 function MaterialSearchBar(props) {
   const [searchValue, setsearchValue] = useState("");
   const{rows,setrows,database,fetchAllDataByOption}=props;
-  console.log(props);
 
   //table search based on username and phone number
   const requestSearch = (searchedVal) => {
     const filteredRows = rows.filter((row) => {
-      return row.username.toLowerCase().includes(searchedVal.toLowerCase()) || row.phone.includes(searchedVal);
+      // return row.username.toLowerCase().includes(searchedVal.toLowerCase()) || row.phone.includes(searchedVal);
+      return row.username.toLowerCase().includes(searchedVal.toLowerCase());
     });
     setrows(filteredRows);
   };
@@ -17,7 +18,8 @@ function MaterialSearchBar(props) {
   //handles search cancelation
   const cancelSearch = () => {
     setsearchValue("");
-    setrows("");    
+    setrows("");   
+    // props.storeDatabase(database);
     fetchAllDataByOption(database);
   }
   return (
@@ -25,7 +27,7 @@ function MaterialSearchBar(props) {
     value={searchValue}
     onChange={(val) => {
       setsearchValue(val)
-      {/* requestSearch(searchValue)  */}
+      /* requestSearch(searchValue)  */
     }}
     onRequestSearch={() => requestSearch(searchValue)}
     onCancelSearch={() => cancelSearch()}
@@ -33,6 +35,14 @@ function MaterialSearchBar(props) {
   />
   )
 }
-
-export default MaterialSearchBar
+export default MaterialSearchBar;
+// const mapStateToProps = (state) => ({
+//   database:state.database
+// });
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     storeDatabase: (database) => {dispatch({ "type": 'SET_DATABASE', "payload": database })}
+//   }
+// };
+// export default connect(mapStateToProps, mapDispatchToProps)(MaterialSearchBar);
 

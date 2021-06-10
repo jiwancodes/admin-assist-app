@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { Fragment, React, useState } from 'react';
 import { Link,useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -17,6 +17,7 @@ import validatePassword from '../../validation/validatePassword';
 import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
+import BlankAppBar from '../../components/BlankAppBar';
 // import Login from "../login/Login"
 
 const useStyles = makeStyles((theme) => ({
@@ -119,6 +120,8 @@ function Signup(props) {
 
 
   return (
+    <Fragment>
+      <BlankAppBar/>
     <Container component="main" maxWidth="xs">
       <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={false} />
       <CssBaseline />
@@ -217,6 +220,7 @@ function Signup(props) {
         </form>
       </div>
     </Container>
+    </Fragment>
   );
 }
 

@@ -1,7 +1,9 @@
 import { React, useEffect, useState } from "react"
-// import MaterialAppBar from '../../components/MaterialAppBar'
 import UserDetailsTableWithPaginationAndSearch from '../table/UserDetailsTableWithPaginationAndSearch'
-import axios from '../../axios-order'
+import MaterialAppBar from '../../components/MaterialAppBar';
+import {logUserOut} from '../../methods/actions'
+import axios from '../../authAxios'
+
 
 function UpdateExpiryPage(props) {
     const [rows, setrows] = useState("");
@@ -14,11 +16,14 @@ function UpdateExpiryPage(props) {
     //fetches data for npstock users just once after initial render  
     useEffect(() => {
         axios.get(`/user/details/${props.database}`).then((response) => {
-            console.log("here is response message", response.data.msg);
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
-        })
+        }).catch((e) => {
+            console.log(JSON.stringify(e));
+            // console.log("status code is",e.name);  
+            logUserOut() ;  
+          });
 
     }, [props.database])
 
@@ -30,12 +35,17 @@ function UpdateExpiryPage(props) {
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
-        })
+        }).catch((e) => {
+            console.log(JSON.stringify(e));
+            // console.log("status code is",e.name);  
+            logUserOut() ;  
+          });
     }
 
 
     return (
         <div>
+        <MaterialAppBar/>
             <div style={{backgroundColor:"#f0f0f0"}}><h3 style={{margin:"auto", textAlign: "center"}}>Details of {props.database} user </h3></div>       
              <UserDetailsTableWithPaginationAndSearch
                 rowsPerPage={rowsPerPage}

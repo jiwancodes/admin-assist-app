@@ -1,38 +1,35 @@
-// import { React, useState} from 'react'
-// import axios from '../../axios-order';
+import React from 'react'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+
+//Higher Order Routes
+import PublicRoute from '../../hoc/PublicRoute'
+import ProtectedRoute from '../../hoc/ProtectedRoute'
+
+//Components
+import NotFound from '../../containers/notfound/NotFound'
+import Login from '../../containers/login/Login'
+import UpdateExpiryPage from '../../containers/updateExpiry/UpdateExpiryPage';
+import ViewUpdateLogs from '../../containers/logs/ViewUpdateLogs';
 import MaterialAppBar from '../../components/MaterialAppBar'
-function Home(props) {
-    //  const [database, setDatabase] = useState("npstock"); 
-    // const [rows, setrows] = useState("");
- 
-
-  //   const fetchAllUserDataByDatabase = (database) => {
-  //     console.log("fetche data called");
-  //     axios.get(`/user/details/${database}`).then((response) => {
-  //         // console.log("here are rows");
-  //         // console.log(response.data.rows);
-  //         var tempData = JSON.parse(response.data.rows);
-  //         setrows(tempData);
-  //     })
-  // }
-
-//   const fetchAllUpdateLogsByDatabase = (database) => {
-//     console.log("fetche data called");
-//     let payload={
-//         "option":database
-//     };
-//     axios.post(`/updatelogs`,payload).then((response) => {
-//       console.log("called update logs");
-//         var tempData = JSON.parse(response.data.rows);
-//         setrows(tempData);
-//     })
-//     console.log(rows);
-// }
+import Signup from '../signup/Signup'
+function Home() {
   return (
-    <div>
+    <Router>
+      <div className="App">
       <MaterialAppBar/>
-
-    </div>
+        <Switch>
+          {/* <ProtectedRoute exact path='/home' component={Home} /> */}
+          {/* <Route exact path='/'><Redirect to="/login"/></Route>
+          <PublicRoute exact path='/signup' component={Signup}/>
+          <PublicRoute exact path='/login' component={Login}/> */}
+          <ProtectedRoute exact path='/manualupdate'component={UpdateExpiryPage}/>
+          <ProtectedRoute exact path='/logs' component={ViewUpdateLogs}/>
+          <ProtectedRoute exact path='/notfound' component={NotFound}/>          
+          <Route ><NotFound/></Route>
+        </Switch>
+      </div>
+    </Router>
   )
 }
+
 export default Home

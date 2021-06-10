@@ -10,18 +10,17 @@ import NotFound from './containers/notfound/NotFound'
 import Login from './containers/login/Login'
 import UpdateExpiryPage from './containers/updateExpiry/UpdateExpiryPage';
 import ViewUpdateLogs from './containers/logs/ViewUpdateLogs';
-import MaterialAppBar from './components/MaterialAppBar';
 import Signup from './containers/signup/Signup'
+
 
 // import Home from './containers/home/Home'
 
 
 function App() {
+
   return (
     <Router>
       <div className="App">
-      <MaterialAppBar/>
-
         <Switch>
           {/* <ProtectedRoute exact path='/home' component={Home} /> */}
           <Route exact path='/'><Redirect to="/login"/></Route>

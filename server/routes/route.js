@@ -22,23 +22,23 @@ router.post('/login',actions.LoginUser)
 router.get('/user/details/npstock', authenticateToken,actions.getAllUserDetailsOfNpstocks)
 
 //api to fetch required details of all users of systemxlite
-router.get('/user/details/systemxlite',actions.getAllUserDetailsOfSystemxlite)
+router.get('/user/details/systemxlite',authenticateToken,actions.getAllUserDetailsOfSystemxlite)
 
 //api to update expiry date of a user of either npstock or systemxlite with post option
-router.post('/user/expdate/add',actions.addExpiryDate)
+router.post('/user/expdate/add',authenticateToken,actions.addExpiryDate)
 
-router.post('/updatelog/add',actions.addUpdateLog)
+router.post('/updatelog/add',authenticateToken,actions.addUpdateLog)
 
-router.post('/updatelogs',actions.fetchExpiryUpdateLogs)
+router.post('/getupdatelogs',authenticateToken,actions.fetchExpiryUpdateLogs)
 
 function authenticateToken(req, res, next) {
     if (req.headers.authorization && req.headers.authorization.split(" ")[0] == 'Bearer') {
         var token = req.headers.authorization.split(" ")[1];
-        console.log(" token is", token);
+        console.log(" authorization token is", token);
         if (token == null) return res.sendStatus(401);
         jwt.verify(token, config.secret, (err, user) => {
             console.log(err)
-            if (err) return res.sendStatus(403)
+            if (err) return res.json({"error":err});
 
             req.user = user
 

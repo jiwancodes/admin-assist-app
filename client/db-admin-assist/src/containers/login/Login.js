@@ -1,4 +1,4 @@
-import { React, useState} from 'react';
+import { Fragment, React, useState} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 // import { connect } from 'react-redux';
 import Avatar from '@material-ui/core/Avatar';
@@ -22,6 +22,7 @@ import axios from '../../axios-order';
 // import CryptoAES from 'crypto-js/aes';
 
 import {encryptAndStoreTokenAndUserName} from '../../methods/actions'
+import BlankAppBar from '../../components/BlankAppBar';
 
 
 
@@ -108,21 +109,19 @@ function LogIn(props) {
         console.log(response.data.success);
         if (response.data.success) {
           encryptAndStoreTokenAndUserName(response.data.token);
-          // var ciphertext = CryptoAES.encrypt(response.data.token, 'fafhao#4fa');
-          // console.log(ciphertext);
-          // localStorage.setItem('jwtToken', ciphertext);
-          // localStorage.setItem('authenticated',true);
-          // localStorage.setItem('user',decoded.newUser.username);
-          // console.log("decoded email", decoded.newUser.username);
-          // var decoded = jwt_decode(response.data.token);
-          // props.storeUser(decoded.newUser);
          history.push('/Manualupdate');
         }
         else {
           setalertMsg(response.data.msg);
           setshowAlert(true);
         }
-      })
+      }).catch((e) => {
+        console.log(JSON.stringify(e));
+        console.log("status code is",e.response.statusText);   
+        setalertMsg(e.response.statusText);
+        setshowAlert(true);
+
+    });
     }
     else {
       seterror(true);
@@ -137,6 +136,8 @@ function LogIn(props) {
 
 
   return (
+    <Fragment>
+      <BlankAppBar/>
     <Container component="main" maxWidth="xs">
       <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={false} />
 
@@ -210,6 +211,7 @@ function LogIn(props) {
         {/* <Copyright /> */}
       </Box>
     </Container>
+    </Fragment>
   );
 }
 // const mapStateToProps = (state) => ({

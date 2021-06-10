@@ -98,14 +98,14 @@ const functions = {
                     }
                     if (value) {
                         console.log("password comparison success");
-                        // Send JWT
                         var newUser = user[0];
                         delete newUser['password']
+                        newUser['loginTime']=moment();
                         console.log(newUser)
                         var token = jwt.sign({ newUser }, config.secret, 
-                            { expiresIn: 1200 }
+                            { expiresIn:1200 }
                             );
-                        console.log("token is :", token);
+                        console.log("login token is :", token);
                         res.json({
                             success: true,
                             token: token,
@@ -113,7 +113,6 @@ const functions = {
                         });
                     } else {
                         console.log("wrong password");
-                        // response is OutgoingMessage object that server response http request
                         res.json({
                             success: false,
                             msg: "Authentication Failed, Wrong Password"

@@ -1,5 +1,6 @@
-import React, { Fragment, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { Fragment, useState} from 'react';
+import { useHistory} from 'react-router-dom';
+// import { useHistory, useLocation } from 'react-router-dom';
 import { connect, useDispatch } from 'react-redux';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+// import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MaterialSideDrawer from './MaterialSideDrawer';
 import {isAuthenticated} from '../methods/actions'
 // import Auth from '../redux/actions/methods'
@@ -30,27 +31,27 @@ const useStyles = makeStyles((theme) =>
 // export default 
 function MaterialAppBar(props) {
   const dispatch = useDispatch();
-  const location = useLocation()
+  // const location = useLocation()
   const classes = useStyles();
   let history = useHistory();
-  const authenticated=isAuthenticated()
-  // const [openDrawer, setopenDrawer] = useState(false);
+  // const [authenticated, setauthenticated] = useState(isAuthenticated());
   const [state, setState] = useState({ left: false });
-
+  // useEffect(() => {
+  //   if(isAuthenticated()){
+  //     setauthenticated(true);
+  //   }
+  // }, [authenticated])
   
-
+  
+  
   const onOptionChangeHandler = (event) => {
-    console.log("onchangeHandler called");
     event.preventDefault();
     // setdatabase(event.target.value);
+    // console.log(location.pathname);
     dispatch({ "type": 'SET_DATABASE', "payload": event.target.value })
     props.storedatabase(event.target.value);
-    console.log(location.pathname);
-    // fetchAllUserDataByDatabase?
-    // fetchAllUserDataByDatabase(event.target.value):
-    // fetchAllUpdateLogsByDatabase(event.target.value)
   }
-
+  
   const onViewUserNavButtonclickHandler = (event) => {
     event.preventDefault();
     history.push(`/manualupdate`);
@@ -59,27 +60,21 @@ function MaterialAppBar(props) {
     event.preventDefault();
     history.push(`/logs`);
   }
-  const logout = () => {
-    props.storeUser({});
-    props.storetoken("");
-    localStorage.removeItem('jwtToken');
-    localStorage.removeItem('user');
-  }
+  
   const toggleDrawer = (anchor, open) => ( event,) => {
     if (
       event.type === 'keydown' &&
       ((event).key === 'Tab' ||
-        (event).key === 'Shift')
-    ) { return; }
-    setState({ ...state, [anchor]: open });
-  };
-
-  return (
-    <div className={classes.root}>
+      (event).key === 'Shift')
+      ) { return; }
+      setState({ ...state, [anchor]: open });
+    };
+    
+    return (
+      <div className={classes.root}>
       <AppBar position="static">
         <MaterialSideDrawer state={state} toggleDrawer={toggleDrawer} />
           <Toolbar>
-        {authenticated?
           <Fragment>
             <IconButton edge="start" onClick={toggleDrawer("left", true)} className={classes.menuButton} color="inherit" aria-label="menu">
               <MenuIcon />
@@ -100,7 +95,8 @@ function MaterialAppBar(props) {
           </IconButton> */}
             </Fragment>
             </Fragment>
-          : null}
+        {/* {authenticated?
+          : null} */}
           </Toolbar>
       </AppBar>
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import { Redirect, Route } from 'react-router-dom';
-import {isAuthenticated} from '../methods/actions';
+import {isAuthenticated,isLoginTimeExpired} from '../methods/actions';
 
 const ProtectedRoute = ({ component: Component,...rest }) => {
-  const isauthenticated= isAuthenticated();
+  const isauthenticated= isAuthenticated()&&!isLoginTimeExpired();
     console.log("authenticated:",isauthenticated);
   return (
     <Route {...rest} render={

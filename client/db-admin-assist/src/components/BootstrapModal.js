@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap'
-import axios from '../axios-order';
+import axios from '../authAxios';
 import CustomizedSnackbars from './CustomizedSnackbars'
+import {logUserOut} from '../methods/actions'
 
 const customStyles = {
   content: {
@@ -70,6 +71,9 @@ function BootstrapModal(props) {
     }).catch((e) => {
       setshowAlert(true);
       console.log(e)
+      if(e.name==='TokenExpiredError'){
+        logUserOut();
+      }
     }).finally(() => {
       console.log(showAlert);
       setSubmitting(false);

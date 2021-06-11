@@ -3,8 +3,10 @@ import UpdateLogTableWithPaginationAndSearch from '../table/UpdateLogTableWithPa
 import MaterialAppBar from '../../components/MaterialAppBar';
 import axios from '../../authAxios'
 import {logUserOut} from '../../methods/actions'
+import { useHistory } from "react-router-dom";
 
 function ViewUpdateLogs(props) {
+    let history= useHistory()
     const [rows, setrows] = useState("");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -20,7 +22,15 @@ function ViewUpdateLogs(props) {
         }).catch((e) => {
             console.log(JSON.stringify(e));
             // console.log("status code is",e.name);  
-            logUserOut() ;  
+            if(e.name==='TokenExpiredError'){
+                console.log("logout called");
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('user');
+                console.log(localStorage.getItem('jwtToken'));
+                // history.push('/login');
+                logUserOut();
+              }  
+            // logUserOut() ;  
           });
 
     }, [props.database]);
@@ -36,7 +46,15 @@ function ViewUpdateLogs(props) {
         }).catch((e) => {
             console.log(JSON.stringify(e));
             // console.log("status code is",e.name);  
-            logUserOut() ;  
+            if(e.name==='TokenExpiredError'){
+                console.log("logout called");
+                localStorage.removeItem('jwtToken');
+                localStorage.removeItem('user');
+                console.log(localStorage.getItem('jwtToken'));
+                history.push('/login');
+                logUserOut();
+              }  
+            // logUserOut() ;  
           });
     }
 

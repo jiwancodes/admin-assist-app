@@ -11,7 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 // import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import MaterialSideDrawer from './MaterialSideDrawer';
-import {isAuthenticated} from '../methods/actions'
+// import {isAuthenticated} from '../methods/actions'
 // import Auth from '../redux/actions/methods'
 
 const useStyles = makeStyles((theme) =>

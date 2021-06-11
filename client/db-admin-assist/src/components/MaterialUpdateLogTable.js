@@ -19,7 +19,7 @@ function MaterialUpdateLogTable(props) {
     const classes = useStyles2();
     const { rowsPerPage, rows, page} = props;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-    const headings = ["SN", "Extension Date", "Username", "Extended Period", "Payment Method", "Updator"];
+    const headings = ["SN", "Extension Date", "Username", "Extended Period", "Payment Method", "Updator","Remarks"];
 
 
     return (
@@ -42,6 +42,7 @@ function MaterialUpdateLogTable(props) {
                             <TableCell align="center">{row.package}</TableCell>
                             <TableCell align="center">{row.paymentmethod}</TableCell>
                             <TableCell align="center">{row.updator}</TableCell>
+                            <TableCell align="center">{row.remarks}</TableCell>
                             {/* <TableCell align="center"><BootstrapModal row={row} database={database} fetchAllDataByOption={fetchAllDataByOption} /></TableCell> */}
                         </TableRow>
                     ))}

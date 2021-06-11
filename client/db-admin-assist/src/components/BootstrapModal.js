@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap'
 import axios from '../authAxios';
 import CustomizedSnackbars from './CustomizedSnackbars'
+import { useHistory } from 'react-router-dom';
+
 import {logUserOut} from '../methods/actions'
 
 const customStyles = {
@@ -19,6 +21,7 @@ const customStyles = {
 
 
 function BootstrapModal(props) {
+  let history = useHistory()
 
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [extensionOption, setextensionOption] = React.useState("fiveDays");
@@ -27,6 +30,7 @@ function BootstrapModal(props) {
   const [response, setresponse] = React.useState(false);
   const [responseData, setresponseData] = React.useState(false);
   const [paymentMethod, setpaymentMethod] = React.useState("Connectips");
+  const [remarks, setRemarks] = React.useState("");
 
 
 
@@ -43,14 +47,18 @@ function BootstrapModal(props) {
   
   const onExtensionOptionChangeHandler = (event) => {
     // console.log("onExtensionChangeHandler called");
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setextensionOption(event.target.value);
   }
    const onPaymentOptionChangeHandler = (event) => {
     // console.log("onExtensionChangeHandler called");
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setpaymentMethod(event.target.value);
   }
+  const onRemarksChangeHandler = (event) => {
+    setRemarks(event.target.value);
+  }
+
 
   const onModalSubmit = () => {
     setSubmitting(true);
@@ -60,11 +68,12 @@ function BootstrapModal(props) {
       "database": props.database,
       "row": props.row,
       "updator":updator,
-      "paymentmethod":paymentMethod
+      "paymentmethod":paymentMethod,
+      "remarks": remarks
     };
-    console.log(payload);
+    // console.log(payload);
     axios.post(`/user/expdate/add`, payload).then((response) => {
-      console.log(response.data.success);
+      // console.log(response.data.success);
       setresponse(response.data.success);
       setresponseData(response.data);
       setshowAlert(true);
@@ -72,10 +81,14 @@ function BootstrapModal(props) {
       setshowAlert(true);
       console.log(e)
       if(e.name==='TokenExpiredError'){
+        console.log("logout called");
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('user');
+        console.log(localStorage.getItem('jwtToken'));
+        history.push('/login');
         logUserOut();
       }
     }).finally(() => {
-      console.log(showAlert);
       setSubmitting(false);
       closeModal();
     });
@@ -105,10 +118,17 @@ function BootstrapModal(props) {
           <div style={{ margin: 5, padding: 2, display: 'flex', justifyContent: "flex-end" }}>Payment Method:
             <select value={paymentMethod} onChange={onPaymentOptionChangeHandler}>
               <option value="Connectips">ConnectIps</option>
-           <option value="Bank Deposite">Bank Deposite</option>
+           <option value="Bank Deposit">Bank Deposit</option>
               <option value="Cheque">Cheque</option>
               <option value="Cash">Cash</option>
+              <option value="Other">Other</option>
             </select>
+          </div>
+          <div style={{ margin: 5, padding: 2, display: 'flex', justifyContent: "flex-end" }}>
+            <label>
+              Remarks:
+            <input type="text" onChange={onRemarksChangeHandler} width="60"></input>
+            </label>
           </div>
         </Modal.Body>
         <Modal.Footer>

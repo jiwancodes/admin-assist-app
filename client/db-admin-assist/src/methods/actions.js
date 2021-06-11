@@ -25,7 +25,7 @@ export const encryptAndStoreTokenAndUserName = (token) => {
     var ciphertext = CryptoAES.encrypt(token, 'fafhao#4fa');
     localStorage.setItem('jwtToken', ciphertext);
     var decoded = jwt_decode(token);
-    console.log('time is',decoded.newUser.loginTime);
+    // console.log('time is',decoded.newUser.loginTime);    
     localStorage.setItem('user', decoded.newUser.username);
 
 }
@@ -71,7 +71,7 @@ export const isLoginTimeExpired=()=>{
             // console.log(presentTime.diff(loginTime, 'minutes'));
             var elapsedTime= presentTime.diff(loginTime,'minutes');
             console.log("elapsed time is",elapsedTime);
-            if (elapsedTime<1) {
+            if (elapsedTime<19) {
                 return (false)
             } else {
                 logUserOut();

@@ -37,12 +37,14 @@ function authenticateToken(req, res, next) {
         // console.log(" authorization token is", token);
         if (token == null) return res.sendStatus(401);
         jwt.verify(token, config.secret, (err, user) => {
-            console.log(err)
             if (err) return res.json({"error":err});
+            else{
 
-            req.user = user
+                req.user = user
+    
+                next()
+            }
 
-            next()
         })
     }
     else {

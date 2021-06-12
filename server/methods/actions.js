@@ -163,7 +163,7 @@ const functions = {
     //Api callback function to fetch required data from table login
     getAllUserDetailsOfNpstocks: async (req, res) => {
         try {
-            console.log("Entered Npstock api")
+            // console.log("Entered Npstock api")
             const getQuery = "SELECT idlogin,username,phone,Date_Format(login.expiry_date,'%Y-%m-%d')as expiry_date FROM login;"
             const [rows, fields] = await connection.query(getQuery);
             res.json({

@@ -35,13 +35,13 @@ export default function MaterialSideDrawer(props) {
 
     const logout = (event) => {
         event.preventDefault();
-        console.log("logout called");
+        // console.log("logout called");
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('user');
-        console.log(localStorage.getItem('jwtToken'));
+        // console.log(localStorage.getItem('jwtToken'));
         history.push('/login');
     }
-
+    
 
     return (
         <div>

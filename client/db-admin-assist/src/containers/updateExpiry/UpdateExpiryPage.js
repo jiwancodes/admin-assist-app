@@ -2,12 +2,13 @@ import { React, useEffect, useState } from "react"
 import UserDetailsTableWithPaginationAndSearch from '../table/UserDetailsTableWithPaginationAndSearch'
 import MaterialAppBar from '../../components/MaterialAppBar';
 import { useHistory } from 'react-router-dom';
-import {logUserOut} from '../../methods/actions'
-import axios from '../../authAxios'
+import axios from '../../axios-order'
+import {getHeader,logUserOut} from '../../methods/actions'
 
 
 function UpdateExpiryPage(props) {
     let history = useHistory()
+    const header=getHeader();
 
     const [rows, setrows] = useState("");
     // const [database, setdatabase] = useState(props.database);
@@ -18,9 +19,10 @@ function UpdateExpiryPage(props) {
 
     //fetches data for npstock users just once after initial render  
     useEffect(() => {
-        console.log("from use effect");
-        console.log(props.database);
-        axios.get(`/user/details/${props.database}`).then((response) => {
+        // console.log("from use effect");
+        // console.log(header)
+        // console.log(props.database);
+        axios.get(`/user/details/${props.database}`,header).then((response) => {
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
@@ -36,13 +38,13 @@ function UpdateExpiryPage(props) {
               } 
             logUserOut() ;  
           });
-
+// eslint-disable-next-line
     }, [props.database])
 
     //switches tables based on option for fetching users of npstock and systemxlite
     const fetchAllDataByOption = (option) => {
         // console.log("fetch data called");
-        axios.get(`/user/details/${option}`).then((response) => {
+        axios.get(`/user/details/${option}`,header).then((response) => {
             // console.log("here are rows");
             // console.log(response.data.rows);
             var tempData = JSON.parse(response.data.rows);

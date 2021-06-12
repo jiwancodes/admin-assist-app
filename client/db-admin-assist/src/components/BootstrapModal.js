@@ -5,7 +5,7 @@ import axios from '../authAxios';
 import CustomizedSnackbars from './CustomizedSnackbars'
 import { useHistory } from 'react-router-dom';
 
-import {logUserOut} from '../methods/actions'
+import {getHeader,logUserOut} from '../methods/actions'
 
 const customStyles = {
   content: {
@@ -22,6 +22,7 @@ const customStyles = {
 
 function BootstrapModal(props) {
   let history = useHistory()
+  const header = getHeader();
 
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [extensionOption, setextensionOption] = React.useState("fiveDays");
@@ -72,7 +73,7 @@ function BootstrapModal(props) {
       "remarks": remarks
     };
     // console.log(payload);
-    axios.post(`/user/expdate/add`, payload).then((response) => {
+    axios.post(`/user/expdate/add`, payload,header).then((response) => {
       // console.log(response.data.success);
       setresponse(response.data.success);
       setresponseData(response.data);

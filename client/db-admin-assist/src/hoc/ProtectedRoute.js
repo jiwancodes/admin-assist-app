@@ -5,7 +5,7 @@ import {isAuthenticated,isLoginTimeExpired} from '../methods/actions';
 
 const ProtectedRoute = ({ component: Component,...rest }) => {
   const isauthenticated= isAuthenticated()&&!isLoginTimeExpired();
-    console.log("authenticated:",isauthenticated);
+    // console.log("authenticated:",isauthenticated);
   return (
     <Route {...rest} render={
       (props) => isauthenticated?<Component {...rest} {...props} />:<Redirect to="/login"/>

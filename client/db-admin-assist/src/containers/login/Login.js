@@ -140,11 +140,11 @@ function LogIn(props) {
       "password": password
     };
     axios.post("/login", payload).then((response) => {
-      console.log(response.data);
-      console.log(response.data.success);
+      // console.log(response.data);
+      // console.log(response.data.success);
       if (response.data.success) {
         encryptAndStoreTokenAndUserName(response.data.token);
-        history.push('/Manualupdate');
+        history.push('/manualupdate');
       }
       else {
         setalertMsg(response.data.msg);

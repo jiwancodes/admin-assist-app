@@ -4,7 +4,7 @@ const dotenv = require("dotenv").config();
 const actions = require('./methods/actions')
 const routes = require('./routes/route');
 const morgan = require('morgan');
-const passport = require('passport');
+// const passport = require('passport');
 const session = require('express-session');
 
 
@@ -27,8 +27,8 @@ app.use(cors())
 app.use(express.static("."));
 actions.connectDatabase();
 app.use(routes);
-app.use(passport.initialize())
-actions.passportStrategy(passport);
+// app.use(passport.initialize())
+// actions.passportStrategy(passport);
 
 const PORT = process.env.PORT || 6797;
 // const PORT = 6797;

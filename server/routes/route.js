@@ -27,14 +27,14 @@ router.get('/user/details/systemxlite',authenticateToken,actions.getAllUserDetai
 //api to update expiry date of a user of either npstock or systemxlite with post option
 router.post('/user/expdate/add',authenticateToken,actions.addExpiryDate)
 
-router.post('/updatelog/add',authenticateToken,actions.addUpdateLog)
+// router.post('/updatelog/add',authenticateToken,actions.addUpdateLog)
 
 router.post('/getupdatelogs',authenticateToken,actions.fetchExpiryUpdateLogs)
 
 function authenticateToken(req, res, next) {
     if (req.headers.authorization && req.headers.authorization.split(" ")[0] == 'Bearer') {
         var token = req.headers.authorization.split(" ")[1];
-        console.log(" authorization token is", token);
+        // console.log(" authorization token is", token);
         if (token == null) return res.sendStatus(401);
         jwt.verify(token, config.secret, (err, user) => {
             console.log(err)

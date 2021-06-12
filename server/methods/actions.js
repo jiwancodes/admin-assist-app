@@ -60,7 +60,7 @@ const functions = {
                     password = hash
                     console.log("email is :", email);
                     console.log("password is", password);
-                    var [rows, fields] = await connection.query('INSERT INTO systemUser (username, email, password) VALUES("' + username + '", "' + email + '", "' + password + '")',
+                    var [rows, fields] = await connection.query(`INSERT INTO systemUser (username, email, password) VALUES(?,?,?)`,
                         [username, email, password]);
                     res.json({
                         "success": true,
@@ -83,29 +83,23 @@ const functions = {
     LoginUser: async (req, res) => {
         const email = req.body.email;
         try {
-            console.log("entered in try");
-            console.log(email);
-            var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ?', [email]);
-            console.log(user);
-            if (user.length > 0) {
-                console.log("saved hash is ", user[0].password);
+            // console.log(email);
+            var [user, field] = await connection.query(`SELECT * FROM systemUser WHERE email = ? or username = ?`, [email,email]);            if (user.length > 0) {
+                // console.log("saved hash is ", user[0].password);
                 bcrypt.compare(req.body.password, user[0].password, function (err, value) {
-                    console.log("entered password comarision")
-
                     if (err) {
                         console.log(err);
                         throw err;
                     }
                     if (value) {
-                        console.log("password comparison success");
+                        // console.log("password comparison success");
                         var newUser = user[0];
                         delete newUser['password']
                         newUser['loginTime']=moment();
-                        console.log(newUser)
                         var token = jwt.sign({ newUser }, config.secret, 
                             { expiresIn:1200 }
                             );
-                        console.log("login token is :", token);
+                        // console.log("login token is :", token);
                         res.json({
                             success: true,
                             token: token,
@@ -141,7 +135,6 @@ const functions = {
         var opts = {}
         opts.secretOrKey = config.secret,
             opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
-        console.log("here i am");
         passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
             console.log(jwt_payload);
             return done(null, false);
@@ -151,7 +144,7 @@ const functions = {
     authenticateToken: function (req, res, next) {
         if (req.headers.authorization && req.headers.authorization.split(" ")[0] == 'Bearer') {
             var token = req.headers.authorization.split(" ")[1];
-            console.log(" token is", token);
+            // console.log(" token is", token);
             if (token == null) return res.sendStatus(401);
             jwt.verify(token, config.secret, (err, user) => {
                 console.log(err)
@@ -216,7 +209,7 @@ const functions = {
             console.log("Entered edit exp date api")
             const userTable = req.body.database === "npstock" ? "login" : "loginsystemxlt";
             const logTable = req.body.database === "npstock" ? "npstockupdatelogs" : "systemxliteupdatelogs";
-            console.log("logtable is ", logTable);
+            // console.log("logtable is ", logTable);
             const id = req.body.database === "npstock" ? "idlogin" : "idloginsystemxlt";
             var new_exp_date = new Date();
             if (moment(req.body.row.expiry_date) < moment()) {
@@ -235,13 +228,13 @@ const functions = {
             if (rows) {
                 let updatedate = new Date();
                 updatedate = moment().format('YYYY-MM-DD');
-                console.log(updatedate);
+                // console.log(updatedate);
                 let updator = req.body.updator;
                 let username = req.body.row.username;
                 let package = req.body.option;
                 let paymentmethod = req.body.paymentmethod;
-                console.log("entered in insert log");
-                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod)VALUES(?, ?, ?, ?)`, [updator, username, package, paymentmethod]);
+                let remarks = req.body.remarks;
+                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod,remarks)VALUES(?, ?, ?, ?,?)`, [updator, username, package, paymentmethod,remarks]);
                 if (logrows) {
                     res.json({
                         "success": true,
@@ -281,8 +274,7 @@ const functions = {
         var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
         try {
             console.log(table);
-            console.log("Entered fetch log api")
-            const getQuery = `SELECT updateid,Date_Format(updatedate,'%Y-%m-%d')as updatedate,updator,username,package,paymentmethod FROM ${table} ORDER BY updateid DESC ;`
+            const getQuery = `SELECT updateid,Date_Format(updatedate,'%Y-%m-%d')as updatedate,updator,username,package,paymentmethod,remarks FROM ${table} ORDER BY updateid DESC ;`
             const [rows, fields] = await connection.query(getQuery);
             res.json({
                 "success": true,
@@ -301,35 +293,35 @@ const functions = {
     },
 
     // is is not used as log insert is included with update expiry date
-    addUpdateLog: async (req, res) => {
-        var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
-        try {
-            var updatedate = moment().format('YYYY-MM-DD')
-            const postQuery = `INSERT INTO manualUpdateLog(updateid,updatedate,updator,username,extendedperiod,package,paymentmethod)
-            VALUES("' + updateid + '", "' + updator + '", "' + username + '", "' + extendedperiod + '", "' + package + '", "' + paymentmethod + '")`
-            const [rows, fields] = await connection.query(postQuery, [updateid, updatedate, updator, username, extendedperiod, package, paymentmethod]);
-            rows ? res.json({
-                "success": true,
-                "msg": "log successfully added",
-                "rows": JSON.stringify(rows),
-                "fields": JSON.stringify(fields)
-            }) : res.json({
-                "success": false,
-                "msg": "Error!! failed to add log expiry date",
-                "err": JSON.stringify(err),
-            })
-        }
-        catch (err) {
-            console.log("error occured");
-            res.json({
-                "success": false,
-                "msg": "Error!! failed to add log expiry date",
-                "err": JSON.stringify(err),
+    // addUpdateLog: async (req, res) => {
+    //     var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
+    //     try {
+    //         var updatedate = moment().format('YYYY-MM-DD')
+    //         const postQuery = `INSERT INTO manualUpdateLog(updateid,updatedate,updator,username,extendedperiod,package,paymentmethod)
+    //         VALUES("' + updateid + '", "' + updator + '", "' + username + '", "' + extendedperiod + '", "' + package + '", "' + paymentmethod + '")`
+    //         const [rows, fields] = await connection.query(postQuery, [updateid, updatedate, updator, username, extendedperiod, package, paymentmethod]);
+    //         rows ? res.json({
+    //             "success": true,
+    //             "msg": "log successfully added",
+    //             "rows": JSON.stringify(rows),
+    //             "fields": JSON.stringify(fields)
+    //         }) : res.json({
+    //             "success": false,
+    //             "msg": "Error!! failed to add log expiry date",
+    //             "err": JSON.stringify(err),
+    //         })
+    //     }
+    //     catch (err) {
+    //         console.log("error occured");
+    //         res.json({
+    //             "success": false,
+    //             "msg": "Error!! failed to add log expiry date",
+    //             "err": JSON.stringify(err),
 
-            })
-        }
+    //         })
+    //     }
 
-    },
+    // },
 
 }
 function validateEmail(email) {

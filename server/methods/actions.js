@@ -19,6 +19,38 @@ const functions = {
             var testQuery = "SELECT * FROM login;"
             var [rows, fields] = await connection.query(testQuery);
             console.log("successfully connected");
+            let createuser = `CREATE TABLE IF NOT EXISTS manualUpdateUser (
+                idlogin int(11) NOT NULL AUTO_INCREMENT,
+                username varchar(100) NOT NULL,
+                email varchar(100) NOT NULL,
+                password mediumtext NOT NULL,
+                PRIMARY KEY (idlogin),
+                UNIQUE KEY email_UNIQUE (email)
+              );`
+            await connection.query(createuser);
+            let createsystemxlitelogs = `CREATE TABLE IF NOT EXISTS systemxliteupdatelogs (
+                updateid int(11) NOT NULL AUTO_INCREMENT,
+                updatedate datetime default current_timestamp not null,
+                updator varchar(50) NOT NULL,
+                username varchar(50) NOT NULL,  
+                package varchar(30) NOT NULL,
+                paymentmethod varchar(50) NOT NULL, 
+                remarks varchar(150) ,
+                PRIMARY KEY (updateid)
+              );`
+            await connection.query(createsystemxlitelogs);
+            let createnpstocklogs = `CREATE TABLE IF NOT EXISTS npstockupdatelogs(
+                updateid int(11) NOT NULL AUTO_INCREMENT,
+                updatedate datetime default current_timestamp not null,
+                updator varchar(50) NOT NULL,
+                username varchar(50) NOT NULL,  
+                package varchar(30) NOT NULL,
+                paymentmethod varchar(50) NOT NULL, 
+                remarks varchar(150) ,
+                PRIMARY KEY (updateid)
+              );`
+            await connection.query(createnpstocklogs);
+
         }
         catch (err) {
             console.error("error occured");
@@ -45,7 +77,7 @@ const functions = {
 
         try {
             console.log("entered in try");
-            var [user, field] = await connection.query('SELECT * FROM systemUser WHERE email = ?', [email]);
+            var [user, field] = await connection.query('SELECT * FROM manualUpdateUser WHERE email = ?', [email]);
             if (user.length > 0) {
                 res.json({
                     "success": false,
@@ -60,7 +92,7 @@ const functions = {
                     password = hash
                     console.log("email is :", email);
                     console.log("password is", password);
-                    var [rows, fields] = await connection.query(`INSERT INTO systemUser (username, email, password) VALUES(?,?,?)`,
+                    var [rows, fields] = await connection.query(`INSERT INTO manualUpdateUser (username, email, password) VALUES(?,?,?)`,
                         [username, email, password]);
                     res.json({
                         "success": true,
@@ -84,7 +116,7 @@ const functions = {
         const email = req.body.email;
         try {
             // console.log(email);
-            var [user, field] = await connection.query(`SELECT * FROM systemUser WHERE email = ? or username = ?`, [email,email]);            if (user.length > 0) {
+            var [user, field] = await connection.query(`SELECT * FROM manualUpdateUser WHERE email = ? or username = ?`, [email, email]); if (user.length > 0) {
                 // console.log("saved hash is ", user[0].password);
                 bcrypt.compare(req.body.password, user[0].password, function (err, value) {
                     if (err) {
@@ -95,10 +127,10 @@ const functions = {
                         // console.log("password comparison success");
                         var newUser = user[0];
                         delete newUser['password']
-                        newUser['loginTime']=moment();
-                        var token = jwt.sign({ newUser }, config.secret, 
-                            { expiresIn:1200 }
-                            );
+                        newUser['loginTime'] = moment();
+                        var token = jwt.sign({ newUser }, config.secret,
+                            { expiresIn: 1200 }
+                        );
                         // console.log("login token is :", token);
                         res.json({
                             success: true,
@@ -234,7 +266,7 @@ const functions = {
                 let package = req.body.option;
                 let paymentmethod = req.body.paymentmethod;
                 let remarks = req.body.remarks;
-                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod,remarks)VALUES(?, ?, ?, ?,?)`, [updator, username, package, paymentmethod,remarks]);
+                var [logrows, logfields] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod,remarks)VALUES(?, ?, ?, ?,?)`, [updator, username, package, paymentmethod, remarks]);
                 if (logrows) {
                     res.json({
                         "success": true,

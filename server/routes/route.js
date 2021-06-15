@@ -9,14 +9,13 @@ router.get('/',(req,res)=>{
     res.send("hello world");
 })
 
-//@route POST /signup
-router.post('/signup',actions.addNewUser)
-
 //@route POST /login
 router.post('/login',actions.LoginUser)
 
-//desc getting user information from token and Bearer authorization header 
-// router.get('/getuserinfo',actions.getUserInfoFromToken)
+//@route POST /signup
+router.post('/signup',authenticateToken,actions.addNewUser)
+// router.post('/signup',actions.addNewUser)
+
 
 //api to fetch required details of all users of npstock
 router.get('/user/details/npstock', authenticateToken,actions.getAllUserDetailsOfNpstocks)

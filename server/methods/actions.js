@@ -60,16 +60,23 @@ const functions = {
     },
     //api callback for update system users
     addNewUser: async (req, res) => {
+        console.log("signup called");
         const username = req.body.username;
         const email = req.body.email;
         var password = req.body.password;
-        if (!validateEmail(email)) {
-            return res.status(403).json({
+        if (req.body.creator !== "admin") {
+            // if(false){
+            return res.json({
+                "success": false,
+                "msg": "Not authorized"
+            });
+        } else if (!validateEmail(email)) {
+            return res.json({
                 "success": false,
                 "msg": "Invalid Email"
             });
         } else if (username === null || email === null || password == null) {
-            return res.status(403).json({
+            return res.json({
                 "success": false,
                 "msg": "Empty form fills"
             });
@@ -116,7 +123,8 @@ const functions = {
         const email = req.body.email;
         try {
             // console.log(email);
-            var [user, field] = await connection.query(`SELECT * FROM manualUpdateUser WHERE email = ? or username = ?`, [email, email]); if (user.length > 0) {
+            var [user, field] = await connection.query(`SELECT * FROM manualUpdateUser WHERE email = ? or username = ?`, [email, email]);
+             if (user.length > 0) {
                 // console.log("saved hash is ", user[0].password);
                 bcrypt.compare(req.body.password, user[0].password, function (err, value) {
                     if (err) {

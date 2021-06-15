@@ -77,7 +77,7 @@ export const isLoginTimeExpired = () => {
             let loginTime = moment(decoded.newUser.loginTime);
             // console.log(presentTime.diff(loginTime, 'minutes'));
             var elapsedTime = presentTime.diff(loginTime, 'minutes');
-            console.log("elapsed time is", elapsedTime);
+            // console.log("elapsed time is", elapsedTime);
             if (elapsedTime < 19) {
                 return (false)
             } else {
@@ -98,7 +98,8 @@ export const isLoginTimeExpired = () => {
 }
 
 
-export const logUserOut = () => dispatch => {
+export const logUserOut = (event) => dispatch => {
+    event.preventDefault();
     // let history = useHistory();
     console.log("logout called");
     localStorage.removeItem('jwtToken');

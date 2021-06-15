@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap'
-import axios from '../authAxios';
+import axios from '../axios-order';
 import CustomizedSnackbars from './CustomizedSnackbars'
 import { useHistory } from 'react-router-dom';
 
@@ -73,12 +73,13 @@ function BootstrapModal(props) {
       "remarks": remarks
     };
     // console.log(payload);
-    axios.post(`/user/expdate/add`, payload,header).then((response) => {
+    axios.post(`/user/expdate/add`,payload,header).then((response) => {
       // console.log(response.data.success);
       setresponse(response.data.success);
       setresponseData(response.data);
       setshowAlert(true);
     }).catch((e) => {
+      console.log("error in connection");
       setshowAlert(true);
       console.log(e)
       if(e.name==='TokenExpiredError'){

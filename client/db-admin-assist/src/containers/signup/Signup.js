@@ -1,12 +1,12 @@
 import { Fragment, React, useState } from 'react';
-import { Link,useHistory } from 'react-router-dom';
+// import {useHistory} from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 // import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
+// import Grid from '@material-ui/core/Grid';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,6 +18,8 @@ import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
 import BlankAppBar from '../../components/BlankAppBar';
+import {getHeader} from '../../methods/actions'
+
 // import Login from "../login/Login"
 
 const useStyles = makeStyles((theme) => ({
@@ -60,7 +62,17 @@ function Signup(props) {
   const [showAlert, setshowAlert] = useState(false);
   const [alertMsg, setalertMsg] = useState("");
   const [errors, seterror] = useState("");
-  let history = useHistory();
+  const [severity, setseverity]=useState(false);
+  let user = localStorage.getItem('user');
+  // let history = useHistory();
+  const header=getHeader();
+
+  const setToNull=()=>{
+    setusername("");
+    setemail("");
+    setpassword1("");
+    setpassword2("");
+  }
 
   const onchangeHandler = (event) => {
     const newErr = { ...errors };
@@ -85,6 +97,7 @@ function Signup(props) {
       // seterror(true);
       setalertMsg("one or more field is empty");
       setshowAlert(true);
+      setseverity(false);
 
     }
     else if (validateEmail(email, errors, seterror) && validatePassword(password1, password2, errors, seterror) && validateUser(username, errors, seterror)) {
@@ -92,20 +105,29 @@ function Signup(props) {
       const payload = {
         "username": username,
         "email": email,
-        "password": password1
+        "password": password1,
+        "creator":user
       };
-      axios.post("/signup", payload).then((response) => {
+      axios.post("/signup", payload,header).then((response) => {
         console.log(response.data);
         console.log(response.data.success);
         if (response.data.success) {
-          // props.history.push("/");
-          history.push('/login');
-          // return <Redirect to={Login} />
+          setalertMsg(response.data.msg);
+          setshowAlert(true);
+          setseverity(true);
+          setToNull();
+          // history.push('/home');
         } else {
           setalertMsg(response.data.msg);
           setshowAlert(true);
+          setseverity(false);
 
         }
+      }).catch((e)=>{
+        console.log(e);
+        setalertMsg("error in connection");
+        setshowAlert(true);
+        setseverity(false);
       })
     }
     else {
@@ -123,7 +145,7 @@ function Signup(props) {
     <Fragment>
       <BlankAppBar/>
     <Container component="main" maxWidth="xs">
-      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={false} />
+      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={severity} />
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -203,9 +225,9 @@ function Signup(props) {
             className={classes.submit}
             onClick={onSubmitClickHandler}
           >
-            Sign In
+            Sign Up
           </Button>
-          <Grid container>
+          {/* <Grid container>
             <Grid item xs>
               <Link href="#" >
                 Forgot password?
@@ -216,7 +238,7 @@ function Signup(props) {
                 {"have an account? Log In"}
               </Link>
             </Grid>
-          </Grid>
+          </Grid> */}
         </form>
       </div>
     </Container>

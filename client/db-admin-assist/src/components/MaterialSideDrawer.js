@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -10,8 +10,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import MailIcon from '@material-ui/icons/Mail';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useHistory } from 'react-router-dom';
+import CustomizedSnackbars from './CustomizedSnackbars';
 
 
 
@@ -30,6 +32,8 @@ const useStyles = makeStyles({
 export default function MaterialSideDrawer(props) {
     const classes = useStyles();
     const history = useHistory();
+    const [showAlert, setshowAlert] = useState(false);
+    const [alertMsg, setalertMsg] = useState("");
     const { toggleDrawer, state } = props
     let user = localStorage.getItem('user');
 
@@ -41,12 +45,24 @@ export default function MaterialSideDrawer(props) {
         // console.log(localStorage.getItem('jwtToken'));
         history.push('/login');
     }
-    
+    const addUser = (event) => {
+        if (user === 'admin') {
+            history.push('/signup')
+        }
+        else {
+            setalertMsg("Only admin can add users")
+            setshowAlert(true);
+        }
+
+    }
+
 
     return (
         <div>
             {(['left']).map((anchor) => (
                 <React.Fragment key={anchor}>
+                    <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={false} />
+
                     <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
                         <div
                             className={clsx(classes.list, { [classes.fullList]: anchor === 'top' || anchor === 'bottom', })}
@@ -67,7 +83,12 @@ export default function MaterialSideDrawer(props) {
                                 <ListItem onClick={logout}>
                                     <ListItemIcon > <ExitToAppIcon /> </ListItemIcon>
                                     <ListItemText primary="logout" />
-                                </ListItem>
+                                </ListItem>    
+                                { user==="admin"?                     
+                                <ListItem onClick={addUser}>
+                                    <ListItemIcon > <AddCircleOutlineIcon /> </ListItemIcon>
+                                    <ListItemText primary="Add User" />
+                                </ListItem>:null}
                                 {/* <div style={{display:"flex",flexDirection:"row",alignItems:"center"}}> */}
                                 {/* </div> */}
                             </List>

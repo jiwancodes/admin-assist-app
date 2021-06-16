@@ -100,8 +100,8 @@ function LogIn(props) {
       }
     }).catch((e) => {
       console.log(JSON.stringify(e));
-      console.log("status code is", e.response.statusText);
-      setalertMsg(e.response.statusText);
+      console.log("status code is", e.message);
+      setalertMsg(e.message);
       setshowAlert(true);
 
     });

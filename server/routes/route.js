@@ -16,6 +16,15 @@ router.post('/login',actions.LoginUser)
 router.post('/signup',authenticateToken,actions.addNewUser)
 // router.post('/signup',actions.addNewUser)
 
+//@route POST /signup
+router.post('/manualupdate/edit/password',authenticateToken,actions.changeUserPassword)
+
+//@route POST /signup
+router.get('/manualupdate/user/delete',authenticateToken,actions.deleteSystemUser)
+
+//@route POST /signup
+router.get('/manualupdate/user',authenticateToken,actions.getAllSystemUser)
+
 
 //api to fetch required details of all users of npstock
 router.get('/user/details/npstock', authenticateToken,actions.getAllUserDetailsOfNpstocks)

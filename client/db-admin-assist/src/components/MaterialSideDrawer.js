@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,Fragment} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -14,6 +14,8 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useHistory } from 'react-router-dom';
 import CustomizedSnackbars from './CustomizedSnackbars';
+import axios from '../axios-order'
+import {getHeader} from '../methods/actions'
 
 
 
@@ -32,6 +34,7 @@ const useStyles = makeStyles({
 export default function MaterialSideDrawer(props) {
     const classes = useStyles();
     const history = useHistory();
+    const header = getHeader();
     const [showAlert, setshowAlert] = useState(false);
     const [alertMsg, setalertMsg] = useState("");
     const { toggleDrawer, state } = props
@@ -53,6 +56,14 @@ export default function MaterialSideDrawer(props) {
             setalertMsg("Only admin can add users")
             setshowAlert(true);
         }
+
+    }
+    const viewManualUpdateUsers=()=>{
+        axios.get('/manualupdate/user',header)
+        .then(()=>{})
+        .catch((e)=>{
+            console.log(e);
+        })
 
     }
 
@@ -84,11 +95,17 @@ export default function MaterialSideDrawer(props) {
                                     <ListItemIcon > <ExitToAppIcon /> </ListItemIcon>
                                     <ListItemText primary="logout" />
                                 </ListItem>    
-                                { user==="admin"?                     
+                                { user==="admin"?    
+                                <Fragment>                
                                 <ListItem onClick={addUser}>
                                     <ListItemIcon > <AddCircleOutlineIcon /> </ListItemIcon>
                                     <ListItemText primary="Add User" />
-                                </ListItem>:null}
+                                </ListItem>
+                                <ListItem onClick={viewManualUpdateUsers}>
+                                    <ListItemIcon > <AddCircleOutlineIcon /> </ListItemIcon>
+                                    <ListItemText primary="View System Users" />
+                                </ListItem>
+                                </Fragment> :null}
                                 {/* <div style={{display:"flex",flexDirection:"row",alignItems:"center"}}> */}
                                 {/* </div> */}
                             </List>

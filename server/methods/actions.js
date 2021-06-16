@@ -18,14 +18,15 @@ const functions = {
             connection = await mysql.createPool(config.mysql_config);
             var testQuery = "SELECT * FROM login;"
             var [rows, fields] = await connection.query(testQuery);
-            console.log("successfully connected");
+            // console.log("connection established with database");
             let createuser = `CREATE TABLE IF NOT EXISTS manualUpdateUser (
                 idlogin int(11) NOT NULL AUTO_INCREMENT,
                 username varchar(100) NOT NULL,
                 email varchar(100) NOT NULL,
                 password mediumtext NOT NULL,
                 PRIMARY KEY (idlogin),
-                UNIQUE KEY email_UNIQUE (email)
+                UNIQUE KEY email_UNIQUE (email),
+                UNIQUE KEY username_UNIQUE (username)
               );`
             await connection.query(createuser);
             let createsystemxlitelogs = `CREATE TABLE IF NOT EXISTS systemxliteupdatelogs (
@@ -60,7 +61,7 @@ const functions = {
     },
     //api callback for update system users
     addNewUser: async (req, res) => {
-        console.log("signup called");
+        // console.log("signup called");
         const username = req.body.username;
         const email = req.body.email;
         var password = req.body.password;
@@ -83,7 +84,7 @@ const functions = {
         }
 
         try {
-            console.log("entered in try");
+            // console.log("entered in try");
             var [user, field] = await connection.query('SELECT * FROM manualUpdateUser WHERE email = ?', [email]);
             if (user.length > 0) {
                 res.json({
@@ -97,8 +98,8 @@ const functions = {
                 var hash = await bcrypt.hash(password, salt);//didnot use callback due to process running in callback hell
                 if (hash) {
                     password = hash
-                    console.log("email is :", email);
-                    console.log("password is", password);
+                    // console.log("email is :", email);
+                    // console.log("password is", password);
                     var [rows, fields] = await connection.query(`INSERT INTO manualUpdateUser (username, email, password) VALUES(?,?,?)`,
                         [username, email, password]);
                     res.json({
@@ -119,12 +120,105 @@ const functions = {
             })
         }
     },
+    getAllSystemUser: async (req, res) => {
+        if (req.body.sender !== "admin") {
+            return res.json({
+                "success": false,
+                "msg": "Unauthorized request",
+            })
+        } else {
+            try {
+                const getQuery = "SELECT idlogin,username,email FROM manualUpdateUser;"
+                const [rows, fields] = await connection.query(getQuery);
+                return res.json({
+                    "success": true,
+                    "msg": "successfully fetched system users",
+                    "rows": JSON.stringify(rows),
+                })
+            }
+            catch (err) {
+                // console.log("error occured");
+                res.json({
+                    "success": false,
+                    "msg": "failed to fetch",
+                    "err": JSON.stringify(err),
+                })
+            }
+        }
+
+    },
+    deleteSystemUser: async (req, res) => {
+        if (req.body.sender !== "admin") {
+            return res.json({
+                "success": false,
+                "msg": "Unauthorized request",
+            })
+        } else {
+            try {
+                const getQuery = "DELETE FROM manualUpdateUser WHERE idlogin=?;"
+                const [rows, fields] = await connection.query(getQuery, [req.body.row.idlogin]);
+                return res.json({
+                    "success": true,
+                    "msg": `User ${req.body.row.username} deleted`,
+                    "rows": JSON.stringify(rows),
+                })
+            }
+            catch (err) {
+                // console.log("error occured");
+                return res.json({
+                    "success": false,
+                    "msg": "failed to delete",
+                    "err": JSON.stringify(err),
+                })
+            }
+        }
+
+    },
+    changeUserPassword: async (req, res) => {
+        console.log("user is",req.user);
+        const password = req.body.password;
+        if (req.body.sender !== "admin") {
+            return res.json({
+                "success": false,
+                "msg": "Unauthorized request",
+            })
+        } else if (password == null && password.length < 5) {
+            return res.json({
+                "success": false,
+                "msg": "Invalid Password"
+            });
+        }
+        else {
+            try {
+                var salt = await bcrypt.genSalt(saltRounds);
+                var hash = await bcrypt.hash(password, salt);//didnot use callback due to process running in callback hell
+                if (hash) {
+                    const getQuery = "UPDATE manualUpdateUser SET password=? WHERE idlogin=?;"
+                    const [rows, fields] = await connection.query(getQuery, [hash, req.body.row.idlogin]);
+                    return res.json({
+                        "success": true,
+                        "msg": `Password for User ${req.body.row.username} changed`,
+                        "rows": JSON.stringify(rows),
+                    })
+                }
+            }
+            catch (err) {
+                // console.log("error occured");
+                return res.json({
+                    "success": false,
+                    "msg": "failed to delete",
+                    "err": JSON.stringify(err),
+                })
+            }
+        }
+
+    },
     LoginUser: async (req, res) => {
         const email = req.body.email;
         try {
             // console.log(email);
             var [user, field] = await connection.query(`SELECT * FROM manualUpdateUser WHERE email = ? or username = ?`, [email, email]);
-             if (user.length > 0) {
+            if (user.length > 0) {
                 // console.log("saved hash is ", user[0].password);
                 bcrypt.compare(req.body.password, user[0].password, function (err, value) {
                     if (err) {
@@ -146,7 +240,7 @@ const functions = {
                             msg: "User authenticated"
                         });
                     } else {
-                        console.log("wrong password");
+                        // console.log("wrong password");
                         res.json({
                             success: false,
                             msg: "Authentication Failed, Wrong Password"
@@ -155,7 +249,7 @@ const functions = {
                 });
             }
             else {
-                console.log("user not found");
+                // console.log("user not found");
                 res.json({
                     success: false,
                     msg: "Authentication failed, User not found"
@@ -176,7 +270,7 @@ const functions = {
         opts.secretOrKey = config.secret,
             opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('jwt')
         passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-            console.log(jwt_payload);
+            // console.log(jwt_payload);
             return done(null, false);
         })
         );
@@ -213,7 +307,7 @@ const functions = {
             })
         }
         catch (err) {
-            console.log("error occured");
+            // console.log("error occured");
             res.json({
                 "success": false,
                 "msg": "failed to fetch",
@@ -224,7 +318,7 @@ const functions = {
     //Api callback function to fetch required data from table loginsystemxlite
     getAllUserDetailsOfSystemxlite: async (req, res) => {
         try {
-            console.log("Entered systemxlite api")
+            // console.log("Entered systemxlite api")
             const getQuery = "SELECT idloginsystemxlt as idlogin,username,phone,Date_Format(loginsystemxlt.expiry_date,'%Y-%m-%d')as expiry_date FROM loginsystemxlt;"
             const [rows, fields] = await connection.query(getQuery);
             res.json({
@@ -234,7 +328,7 @@ const functions = {
             })
         }
         catch (err) {
-            console.log("error occured");
+            // console.log("error occured");
             res.json({
                 "success": false,
                 "msg": "failed to fetch",
@@ -244,9 +338,9 @@ const functions = {
     },
     //Api callback function to update expiry date based on various constraints
     addExpiryDate: async (req, res) => {
-        console.log(req.body);
+        // console.log(req.body);
         try {
-            console.log("Entered edit exp date api")
+            // console.log("Entered edit exp date api")
             const userTable = req.body.database === "npstock" ? "login" : "loginsystemxlt";
             const logTable = req.body.database === "npstock" ? "npstockupdatelogs" : "systemxliteupdatelogs";
             // console.log("logtable is ", logTable);
@@ -299,8 +393,8 @@ const functions = {
 
         }
         catch (err) {
-            console.log("error occured");
-            console.log(err);
+            // console.log("error occured");
+            // console.log(err);
             res.json({
                 "success": false,
                 "msg": "Error!! failed to extend expiry date",
@@ -313,7 +407,7 @@ const functions = {
     fetchExpiryUpdateLogs: async (req, res) => {
         var table = req.body.option === 'npstock' ? "npstockupdatelogs" : "systemxliteupdatelogs"
         try {
-            console.log(table);
+            // console.log(table);
             const getQuery = `SELECT updateid,Date_Format(updatedate,'%Y-%m-%d')as updatedate,updator,username,package,paymentmethod,remarks FROM ${table} ORDER BY updateid DESC ;`
             const [rows, fields] = await connection.query(getQuery);
             res.json({
@@ -323,7 +417,7 @@ const functions = {
             })
         }
         catch (err) {
-            console.log("error occured");
+            // console.log("error occured");
             res.json({
                 "success": false,
                 "msg": "failed to fetch logs",

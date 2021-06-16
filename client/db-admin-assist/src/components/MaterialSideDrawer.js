@@ -12,6 +12,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import { useHistory } from 'react-router-dom';
 import CustomizedSnackbars from './CustomizedSnackbars';
 import axios from '../axios-order'
@@ -102,7 +103,7 @@ export default function MaterialSideDrawer(props) {
                                     <ListItemText primary="Add User" />
                                 </ListItem>
                                 <ListItem onClick={viewManualUpdateUsers}>
-                                    <ListItemIcon > <AddCircleOutlineIcon /> </ListItemIcon>
+                                    <ListItemIcon > <VisibilityIcon /> </ListItemIcon>
                                     <ListItemText primary="View System Users" />
                                 </ListItem>
                                 </Fragment> :null}

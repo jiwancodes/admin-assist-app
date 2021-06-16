@@ -16,7 +16,7 @@ const useStyles2 = makeStyles({
     },
   });
 
-function MaterialUserDetailTable(props) {
+function ManualUpdateUserTable(props) {
     const classes = useStyles2();
     const {rowsPerPage,rows,page,database,fetchAllDataByOption}=props;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -28,9 +28,9 @@ function MaterialUserDetailTable(props) {
           <TableRow>
             <TableCell align="center"><b>SN</b></TableCell>
             <TableCell align="center"><b>Username</b></TableCell>
-            <TableCell align="center"><b>Phone</b></TableCell>
-            <TableCell align="center"><b>Expiry Date</b></TableCell>
-            <TableCell align="center"><b>Update Expiry Date</b></TableCell>
+            <TableCell align="center"><b>Email</b></TableCell>
+            <TableCell align="center"><b>Change Password</b></TableCell>
+            <TableCell align="center"><b>Delete User</b></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -42,8 +42,8 @@ function MaterialUserDetailTable(props) {
               <TableCell component="th" align="center" scope="row">{i+1+(page* rowsPerPage)}</TableCell>
               <TableCell align="center" >{row.username}</TableCell>
               <TableCell align="center">{row.phone}</TableCell>
-              <TableCell align="center">{row.expiry_date}</TableCell>
-              <TableCell align="center"><BootstrapModal row={row} database={database}/></TableCell>
+              <TableCell align="center"><BootstrapModal row={row} /></TableCell>
+              <TableCell align="center"><BootstrapModal row={row} /></TableCell>
             </TableRow>
           ))}
           {emptyRows > 0 && (
@@ -57,4 +57,4 @@ function MaterialUserDetailTable(props) {
     )
 }
 
-export default MaterialUserDetailTable
+export default ManualUpdateUserTable

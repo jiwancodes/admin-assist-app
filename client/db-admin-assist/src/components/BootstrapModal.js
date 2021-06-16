@@ -42,7 +42,6 @@ function BootstrapModal(props) {
   const closeModal = () => {
     setresponse(false);
     setIsOpen(false);
-    props.fetchAllDataByOption(props.database);
   }
 
   
@@ -111,12 +110,14 @@ function BootstrapModal(props) {
           <h4 style={{ margin: 1, padding: 2, color: "f00000" }}>This may alter the database. So be sure before commiting to change.</h4>
           <div style={{ margin: 5, padding: 2, display: 'flex', justifyContent: "flex-end" }}>Extend expiry date of user by:
             <select value={extensionOption} onChange={onExtensionOptionChangeHandler}>
+            {/* <option value="">Select</option> */}
               <option value="fiveDays">5 days</option>
              {props.database==='npstock'? <option value="threeMonths">3 months</option>: null}
               <option value="oneYear">1 year</option>
               <option value="lifeTime">life time</option>
             </select>
           </div>
+          {extensionOption!=='fiveDays'?
           <div style={{ margin: 5, padding: 2, display: 'flex', justifyContent: "flex-end" }}>Payment Method:
             <select value={paymentMethod} onChange={onPaymentOptionChangeHandler}>
               <option value="Connectips">ConnectIps</option>
@@ -125,7 +126,7 @@ function BootstrapModal(props) {
               <option value="Cash">Cash</option>
               <option value="Other">Other</option>
             </select>
-          </div>
+          </div>:null}
           <div style={{ margin: 5, padding: 2, display: 'flex', justifyContent: "flex-end" }}>
             <label>
               Remarks:

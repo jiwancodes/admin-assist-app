@@ -16,13 +16,13 @@ router.post('/login',actions.LoginUser)
 router.post('/signup',authenticateToken,actions.addNewUser)
 // router.post('/signup',actions.addNewUser)
 
-//@route POST /signup
+//api to change password
 router.post('/manualupdate/edit/password',authenticateToken,actions.changeUserPassword)
 
-//@route POST /signup
+//api to delete a system user
 router.get('/manualupdate/user/delete',authenticateToken,actions.deleteSystemUser)
 
-//@route POST /signup
+//api to fetch all system users
 router.get('/manualupdate/user',authenticateToken,actions.getAllSystemUser)
 
 

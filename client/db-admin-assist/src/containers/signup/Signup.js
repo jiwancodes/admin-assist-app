@@ -1,12 +1,8 @@
 import { Fragment, React, useState } from 'react';
-// import {useHistory} from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-// import FormControlLabel from '@material-ui/core/FormControlLabel';
-// import Checkbox from '@material-ui/core/Checkbox';
-// import Grid from '@material-ui/core/Grid';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,8 +13,10 @@ import validatePassword from '../../validation/validatePassword';
 import validateUser from '../../validation/validateUser';
 import CustomizedSnackbars from '../../components/CustomizedSnackbars';
 import axios from '../../axios-order';
-import BlankAppBar from '../../components/BlankAppBar';
+import BackAppBar from '../../components/BackAppBar';
 import {getHeader} from '../../methods/actions'
+import { useHistory } from 'react-router-dom';
+
 
 // import Login from "../login/Login"
 
@@ -64,7 +62,7 @@ function Signup(props) {
   const [errors, seterror] = useState("");
   const [severity, setseverity]=useState(false);
   let user = localStorage.getItem('user');
-  // let history = useHistory();
+  let history = useHistory();
   const header=getHeader();
 
   const setToNull=()=>{
@@ -74,6 +72,11 @@ function Signup(props) {
     setpassword2("");
   }
 
+  const logout = () => {
+    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('user');
+    history.push('/login');
+}
   const onchangeHandler = (event) => {
     const newErr = { ...errors };
     newErr[event.target.name] = "";
@@ -93,7 +96,7 @@ function Signup(props) {
   const onSubmitClickHandler = (event) => {
     event.preventDefault();
     if (isEmpty(username) || isEmpty(email) || isEmpty(password1) || isEmpty(password2)) {
-      console.log("field is empty");
+      // console.log("field is empty");
       // seterror(true);
       setalertMsg("one or more field is empty");
       setshowAlert(true);
@@ -101,7 +104,7 @@ function Signup(props) {
 
     }
     else if (validateEmail(email, errors, seterror) && validatePassword(password1, password2, errors, seterror) && validateUser(username, errors, seterror)) {
-      console.log("validaton true")
+      // console.log("validaton true")
       const payload = {
         "username": username,
         "email": email,
@@ -109,8 +112,8 @@ function Signup(props) {
         "creator":user
       };
       axios.post("/signup", payload,header).then((response) => {
-        console.log(response.data);
-        console.log(response.data.success);
+        // console.log(response.data);
+        // console.log(response.data.success);
         if (response.data.success) {
           setalertMsg(response.data.msg);
           setshowAlert(true);
@@ -124,15 +127,19 @@ function Signup(props) {
 
         }
       }).catch((e)=>{
-        console.log(e);
-        setalertMsg("error in connection");
+         console.log(JSON.stringify(e));           
+        if(e.message==='Request failed with status code 401'){
+            // console.log("logout called");
+            logout();
+          } 
+        setalertMsg(e.message);
         setshowAlert(true);
         setseverity(false);
-      })
+      });
     }
     else {
       // seterror(true);
-      console.log("one of the field is invalid");
+      // console.log("one of the field is invalid");
       setalertMsg("Invalid form fill");
       setshowAlert(true);
 
@@ -143,7 +150,7 @@ function Signup(props) {
 
   return (
     <Fragment>
-      <BlankAppBar/>
+      <BackAppBar/>
     <Container component="main" maxWidth="xs">
       <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={alertMsg} severity={severity} />
       <CssBaseline />
@@ -152,7 +159,7 @@ function Signup(props) {
           <AccountCircleIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign Up
+          Create New User
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
@@ -179,7 +186,6 @@ function Signup(props) {
             label="Email Address"
             name="email"
             autoComplete="email"
-            autoFocus
             onChange={onchangeHandler}
             value={email}
           />
@@ -225,7 +231,7 @@ function Signup(props) {
             className={classes.submit}
             onClick={onSubmitClickHandler}
           >
-            Sign Up
+            Create User
           </Button>
           {/* <Grid container>
             <Grid item xs>

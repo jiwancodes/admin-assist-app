@@ -15,8 +15,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { useHistory } from 'react-router-dom';
 import CustomizedSnackbars from './CustomizedSnackbars';
-import axios from '../axios-order'
-import {getHeader} from '../methods/actions'
+// import {getHeader} from '../methods/actions'
 
 
 
@@ -35,7 +34,6 @@ const useStyles = makeStyles({
 export default function MaterialSideDrawer(props) {
     const classes = useStyles();
     const history = useHistory();
-    const header = getHeader();
     const [showAlert, setshowAlert] = useState(false);
     const [alertMsg, setalertMsg] = useState("");
     const { toggleDrawer, state } = props
@@ -43,10 +41,8 @@ export default function MaterialSideDrawer(props) {
 
     const logout = (event) => {
         event.preventDefault();
-        // console.log("logout called");
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('user');
-        // console.log(localStorage.getItem('jwtToken'));
         history.push('/login');
     }
     const addUser = (event) => {
@@ -60,11 +56,7 @@ export default function MaterialSideDrawer(props) {
 
     }
     const viewManualUpdateUsers=()=>{
-        axios.get('/manualupdate/user',header)
-        .then(()=>{})
-        .catch((e)=>{
-            console.log(e);
-        })
+        history.push('/system/users');
 
     }
 
@@ -104,7 +96,7 @@ export default function MaterialSideDrawer(props) {
                                 </ListItem>
                                 <ListItem onClick={viewManualUpdateUsers}>
                                     <ListItemIcon > <VisibilityIcon /> </ListItemIcon>
-                                    <ListItemText primary="View System Users" />
+                                    <ListItemText primary="System Users" />
                                 </ListItem>
                                 </Fragment> :null}
                                 {/* <div style={{display:"flex",flexDirection:"row",alignItems:"center"}}> */}

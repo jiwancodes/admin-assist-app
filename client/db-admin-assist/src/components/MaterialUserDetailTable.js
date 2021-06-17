@@ -43,7 +43,7 @@ function MaterialUserDetailTable(props) {
               <TableCell align="center" >{row.username}</TableCell>
               <TableCell align="center">{row.phone}</TableCell>
               <TableCell align="center">{row.expiry_date}</TableCell>
-              <TableCell align="center"><BootstrapModal row={row} database={database}/></TableCell>
+              <TableCell align="center"><BootstrapModal row={row} database={database} fetchAllDataByOption={fetchAllDataByOption} name ="Extend Expiry Date" variant="primary"/></TableCell>
             </TableRow>
           ))}
           {emptyRows > 0 && (

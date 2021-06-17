@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react"
 import UpdateLogTableWithPaginationAndSearch from '../table/UpdateLogTableWithPaginationAndSearch'
 import MaterialAppBar from '../../components/MaterialAppBar';
 import axios from '../../axios-order'
-import {getHeader,logUserOut} from '../../methods/actions'
+import {getHeader} from '../../methods/actions'
 import { useHistory } from "react-router-dom";
 
 function ViewUpdateLogs(props) {
@@ -11,7 +11,12 @@ function ViewUpdateLogs(props) {
     const [rows, setrows] = useState("");
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    // const headings = ["SN", "Extension Date", "Username", "Extended Period", "Payment Method","Updator"];
+
+    const logout = () => {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('user');
+        history.push('/login');
+    }
 
     //fetches data for npstock users just once after initial render  
     useEffect(() => {
@@ -21,40 +26,27 @@ function ViewUpdateLogs(props) {
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
         }).catch((e) => {
-            console.log(JSON.stringify(e));  
-            if(e.name==='TokenExpiredError'){
-                console.log("logout called");
-                localStorage.removeItem('jwtToken');
-                localStorage.removeItem('user');
-                console.log(localStorage.getItem('jwtToken'));
-                // history.push('/login');
-                logUserOut();
-              }  
-            // logUserOut() ;  
+            console.log(JSON.stringify(e));           
+            if(e.message==='Request failed with status code 401'){
+                // console.log("logout called");
+                logout();
+              } 
           });
 // eslint-disable-next-line
     }, [props.database]);
 
     //switches tables based on option for fetching users of npstock and systemxlite
     const fetchAllDataByOption = (option) => {
-        console.log("from onchange");
-        console.log("fetche data called");
         let payload = { "option": option };
         axios.post(`/updatelogs`,payload,header).then((response) => {
             var tempData = JSON.parse(response.data.rows);
             setrows(tempData);
         }).catch((e) => {
-            console.log(JSON.stringify(e));
-            // console.log("status code is",e.name);  
-            if(e.name==='TokenExpiredError'){
-                console.log("logout called");
-                localStorage.removeItem('jwtToken');
-                localStorage.removeItem('user');
-                console.log(localStorage.getItem('jwtToken'));
-                history.push('/login');
-                logUserOut();
-              }  
-            // logUserOut() ;  
+            console.log(JSON.stringify(e));           
+            if(e.message==='Request failed with status code 401'){
+                // console.log("logout called");
+                logout();
+              } 
           });
     }
 

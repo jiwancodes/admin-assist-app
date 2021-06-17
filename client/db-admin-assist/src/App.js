@@ -12,6 +12,7 @@ import UpdateExpiryPage from './containers/updateExpiry/UpdateExpiryPage';
 import ViewUpdateLogs from './containers/logs/ViewUpdateLogs';
 import Signup from './containers/signup/Signup'
 import AdminOnlyRoute from './hoc/AdminOnlyRoute';
+import ViewSystemUsers from './containers/systemUsers/ViewSystemUsers';
 
 
 // import Home from './containers/home/Home'
@@ -29,6 +30,7 @@ function App() {
           <ProtectedRoute exact path='/manualupdate'component={UpdateExpiryPage}/>
           {/* <ProtectedRoute exact path='/signup' component={Signup}/> */}
           <AdminOnlyRoute exact path='/signup' component={Signup}/>
+          <AdminOnlyRoute exact path='/system/users' component={ViewSystemUsers}/>
           <ProtectedRoute exact path='/logs' component={ViewUpdateLogs}/>
           <ProtectedRoute exact path='/notfound' component={NotFound}/>          
           <Route ><NotFound/></Route>

@@ -42,16 +42,9 @@ export const isAuthenticated = () => {
     // console.log("is auth called");
     try {
         const token = localStorage.getItem('jwtToken');
-        if (token !== "" || token !== null) {
+        if (token !=="" || token !== null) {
             var encoded = decryptStoredToken();
             var decoded = jwt_decode(encoded);
-            // let presentTime= moment(new Date());
-            // let loginTime=moment(decoded.newUser.loginTime);
-            // console.log('time is',decoded.newUser.loginTime);
-            // console.log('Present time is',presentTime);
-            // console.log(presentTime.diff(loginTime, 'minutes'));
-            // var elapsedTime= presentTime.diff(decoded.newUser.loginTime,'minutes');
-            // console.log("elapsed time is",elapsedTime);
             if (decoded.newUser.username && decoded.newUser.email) {
                 return (true)
             } else {
@@ -62,7 +55,7 @@ export const isAuthenticated = () => {
             return false;
         }
     } catch (e) {
-        console.log(e);
+        // console.log(e);
         return false;
     }
 }
@@ -101,10 +94,10 @@ export const isLoginTimeExpired = () => {
 export const logUserOut = (event) => dispatch => {
     event.preventDefault();
     // let history = useHistory();
-    console.log("logout called");
+    // console.log("logout called");
     localStorage.removeItem('jwtToken');
     localStorage.removeItem('user');
-    console.log(localStorage.getItem('jwtToken'));
+    // console.log(localStorage.getItem('jwtToken'));
     // history.push('/login');
     <Redirect to="/login" />
 };

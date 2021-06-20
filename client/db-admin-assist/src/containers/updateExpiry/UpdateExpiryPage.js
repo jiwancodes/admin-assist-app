@@ -20,7 +20,7 @@ function UpdateExpiryPage(props) {
         history.push('/login');
     }
 
-    //fetches data for npstock users just once after initial render  
+    //fetches data for npstocks users just once after initial render  
     useEffect(() => {
         axios.get(`/user/details/${props.database}`,header).then((response) => {
             var tempData = JSON.parse(response.data.rows);
@@ -35,7 +35,7 @@ function UpdateExpiryPage(props) {
 // eslint-disable-next-line
     }, [props.database])
 
-    //switches tables based on option for fetching users of npstock and systemxlite
+    //switches tables based on option for fetching users of npstocks and systemxlite
     const fetchAllDataByOption = (option) => {
         // console.log("fetch data called");
         axios.get(`/user/details/${option}`,header).then((response) => {
@@ -56,7 +56,7 @@ function UpdateExpiryPage(props) {
     return (
         <div>
         <MaterialAppBar/>
-            <div style={{backgroundColor:"#f0f0f0"}}><h3 style={{margin:"auto", textAlign: "center"}}>Details of {props.database} user </h3></div>       
+            <div style={{backgroundColor:"#f0f0f0"}}><h3 style={{margin:"auto", textAlign: "center"}}>{props.database} User details </h3></div>       
              <UserDetailsTableWithPaginationAndSearch
                 rowsPerPage={rowsPerPage}
                 setRowsPerPage={setRowsPerPage}

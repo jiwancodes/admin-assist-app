@@ -19,7 +19,7 @@ function ViewSystemUsers(props) {
         localStorage.removeItem('user');
         history.push('/login');
     }
-    //fetches data for npstock users just once after initial render  
+    //fetches data for npstocks users just once after initial render  
     useEffect(() => {
         axios.get(`/manualupdate/user`, header).then((response) => {
             var tempData = JSON.parse(response.data.rows);
@@ -34,7 +34,7 @@ function ViewSystemUsers(props) {
         // eslint-disable-next-line
     }, [])
 
-    //switches tables based on option for fetching users of npstock and systemxlite
+    //switches tables based on option for fetching users of npstocks and systemxlite
     const fetchAllSystemUsers = () => {
         axios.get(`/manualupdate/user`, header).then((response) => {
             var tempData = JSON.parse(response.data.rows);

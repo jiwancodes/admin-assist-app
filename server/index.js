@@ -5,7 +5,7 @@ const actions = require('./methods/actions')
 const routes = require('./routes/route');
 // const morgan = require('morgan');
 // const passport = require('passport');
-const session = require('express-session');
+// const session = require('express-session');
 
 
 const app = express()

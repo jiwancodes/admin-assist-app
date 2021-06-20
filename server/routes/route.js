@@ -17,22 +17,22 @@ router.post('/signup',authenticateToken,actions.addNewUser)
 // router.post('/signup',actions.addNewUser)
 
 //api to change password
-router.post('/manualupdate/edit/password',authenticateToken,actions.changeUserPassword)
+router.post('/manualupdate/user/edit/password',authenticateToken,actions.changeUserPassword)
 
 //api to delete a system user
-router.get('/manualupdate/user/delete',authenticateToken,actions.deleteSystemUser)
+router.post('/manualupdate/user/delete',authenticateToken,actions.deleteSystemUser)
 
 //api to fetch all system users
 router.get('/manualupdate/user',authenticateToken,actions.getAllSystemUser)
 
 
-//api to fetch required details of all users of npstock
-router.get('/user/details/npstock', authenticateToken,actions.getAllUserDetailsOfNpstocks)
+//api to fetch required details of all users of npstocks
+router.get('/user/details/npstocks', authenticateToken,actions.getAllUserDetailsOfNpstocks)
 
 //api to fetch required details of all users of systemxlite
 router.get('/user/details/systemxlite',authenticateToken,actions.getAllUserDetailsOfSystemxlite)
 
-//api to update expiry date of a user of either npstock or systemxlite with post option
+//api to update expiry date of a user of either npstocks or systemxlite with post option
 router.post('/user/expdate/add',authenticateToken,actions.addExpiryDate)
 
 // router.post('/updatelog/add',authenticateToken,actions.addUpdateLog)
@@ -45,7 +45,7 @@ function authenticateToken(req, res, next) {
         // console.log(" authorization token is", token);
         if (token == null) return res.sendStatus(401);
         jwt.verify(token, config.secret, (err, user) => {
-            if (err) return res.json({"error":err});
+            if (err) return res.status(401).send("token expired");
             else{
 
                 req.user = user

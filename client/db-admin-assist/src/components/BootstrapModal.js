@@ -151,7 +151,7 @@ function BootstrapModal(props) {
 
   return (
     <div style={customStyles}>
-      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={responseData.msg} severity={responseData.success} />
+      <CustomizedSnackbars open={showAlert} setOpen={setshowAlert} msg={responseData.msg} severity={responseData.success} style={{width:"200px"}}/>
       <Button variant={props.variant} onClick={openModal}>{props.name}</Button>
       <Modal show={modalIsOpen}
         style={customStyles} >

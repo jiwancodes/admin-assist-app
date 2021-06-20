@@ -82,7 +82,7 @@ function LogIn(props) {
   }
 
   const onSubmitClickHandler = (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     const payload = {
       "email": email,
       "password": password
@@ -107,6 +107,12 @@ function LogIn(props) {
     });
 
   }
+
+  const handleKeypress = e => {
+  if (e.code === 'Enter') {
+    onSubmitClickHandler();
+  }
+};
 
 
 
@@ -138,6 +144,7 @@ function LogIn(props) {
               autoComplete="email"
               autoFocus
               onChange={onchangeHandler}
+              onKeyPress={handleKeypress}
               value={email}
             />
             {errors["email"] ? (<div style={guideStyle}>{errors["email"]}</div>) : null}
@@ -152,6 +159,7 @@ function LogIn(props) {
               type="password"
               id="password"
               onChange={onchangeHandler}
+              onKeyPress={handleKeypress}
               value={password}
             />
             {errors["password"] ? (<div style={guideStyle}>{errors["password"]}</div>) : null}

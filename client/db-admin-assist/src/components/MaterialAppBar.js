@@ -95,8 +95,8 @@ function MaterialAppBar(props) {
                     id: 'age-native-simple',
                   }}
                 >
-                  <option name="npstocks" value="npstock">Npstock</option>
-                  <option name="systemxlite" value="systemxlite">Systemxlite</option>
+                  <option name="npstocks" value="npstocks">npstocks</option>
+                  <option name="systemxlite" value="systemxlite">systemxlite</option>
                 </Select>
               </FormControl>
             </Fragment>

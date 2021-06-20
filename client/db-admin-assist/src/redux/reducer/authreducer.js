@@ -1,7 +1,7 @@
 // import isEmpty from '../../validation/is-empty';
 
 const initialState = {
-   database: "npstock",
+   database: "npstocks",
    // isAuthenticated:localStorage.getItem('authenticated'),
    // user:localStorage.getItem('user'),
 

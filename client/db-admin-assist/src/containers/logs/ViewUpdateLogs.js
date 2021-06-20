@@ -18,7 +18,7 @@ function ViewUpdateLogs(props) {
         history.push('/login');
     }
 
-    //fetches data for npstock users just once after initial render  
+    //fetches data for npstocks users just once after initial render  
     useEffect(() => {
         let payload = { "option": props.database };
         axios.post(`/getupdatelogs`,payload,header).then((response) => {
@@ -35,7 +35,7 @@ function ViewUpdateLogs(props) {
 // eslint-disable-next-line
     }, [props.database]);
 
-    //switches tables based on option for fetching users of npstock and systemxlite
+    //switches tables based on option for fetching users of npstocks and systemxlite
     const fetchAllDataByOption = (option) => {
         let payload = { "option": option };
         axios.post(`/updatelogs`,payload,header).then((response) => {
@@ -53,7 +53,7 @@ function ViewUpdateLogs(props) {
     return (
         <div>
             <MaterialAppBar/>
-            <div style={{ backgroundColor: "#f0f0f0" }}><h3 style={{ margin: "auto", textAlign: "center" }}>Update log of {props.database} users</h3></div>
+            <div style={{ backgroundColor: "#f0f0f0" }}><h3 style={{ margin: "auto", textAlign: "center" }}>{props.database} manual update logs</h3></div>
 
             <UpdateLogTableWithPaginationAndSearch
                 rowsPerPage={rowsPerPage}

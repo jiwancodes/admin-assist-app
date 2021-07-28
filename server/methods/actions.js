@@ -50,7 +50,6 @@ const functions = {
                 PRIMARY KEY (updateid)
               );`
             await connection.query(createnpstocklogs);
-
         }
         catch (err) {
             console.error("error occured");
@@ -376,6 +375,9 @@ const functions = {
                         package === "oneYear" ? moment(oldDate).add(1, 'years') : package === "threeMonths" ? moment(oldDate).add(3, 'months') : moment(oldDate).add(5, 'days');
                     // console.log("new expiry date is:",new_exp_date);
                 }
+              
+                updateStateOfTrialUser(userTable, package, username);
+                
                 const postQuery = `UPDATE ${userTable} SET expiry_date=? WHERE ${id}=?`
                 const [rows] = await connection.query(postQuery, [new_exp_date.format('YYYY-MM-DD'), req.body.row.idlogin]);
                 var [logrows] = await connection.query(`INSERT INTO ${logTable}(updator,username,package,paymentmethod,remarks)VALUES(?, ?, ?, ?,?)`, [updator, username, package, paymentmethod, remarks]);
@@ -419,7 +421,6 @@ const functions = {
             })
         }
     },
-
 }
 function validateEmail(email) {
     //eslint-disable-next-line
@@ -434,6 +435,19 @@ const isEmpty = (value) => {
         (typeof value === 'object' && Object.keys(value).length === 0) ||
         (typeof value === 'string' && value.trim().length === 0)
     );
+};
+
+ const updateStateOfTrialUser = async (table, package,username)=>{
+        connection = await mysql.createConnection(config.xserverdb_config);
+        var selectQuery= `SELECT * FROM ${table} WHERE username=?`
+        var [rows,fields] = await connection.query(selectQuery, [username]);
+        if(rows[0].is_trialuser && package==='fiveDays'){
+            console.log('return');
+            return null;
+        }else{
+            var query = `UPDATE ${table} SET is_trialuser=? WHERE username=?`
+            var [rows, fields] = await connection.query(query,[false,username]);
+        }       
 };
 
 module.exports = functions;

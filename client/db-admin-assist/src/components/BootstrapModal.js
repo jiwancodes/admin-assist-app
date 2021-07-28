@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function BootstrapModal(props) {
+  console.log("database is:", props.database);
   let history = useHistory();
   const header = getHeader();
   const classes = useStyles();
@@ -172,7 +173,7 @@ function BootstrapModal(props) {
                 >
                   <MenuItem value="" disabled>Choose </MenuItem>
                   <MenuItem value="fiveDays">5 days</MenuItem>
-                  {props.database === 'npstock' ? <MenuItem value="threeMonths">3 months</MenuItem> : null}
+                  {props.database === 'npstocks' ? <MenuItem value="threeMonths">3 months</MenuItem> : null}
                   <MenuItem value="oneYear">1 year</MenuItem>
                   <MenuItem value="lifeTime">life time</MenuItem>
                 </Select>

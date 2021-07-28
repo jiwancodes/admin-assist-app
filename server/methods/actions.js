@@ -438,15 +438,15 @@ const isEmpty = (value) => {
 };
 
  const updateStateOfTrialUser = async (table, package,username)=>{
-        connection = await mysql.createConnection(config.xserverdb_config);
+        var conn = await mysql.createConnection(config.xserverdb_config);
         var selectQuery= `SELECT * FROM ${table} WHERE username=?`
-        var [rows,fields] = await connection.query(selectQuery, [username]);
+        var [rows,fields] = await conn.query(selectQuery, [username]);
         if(rows[0].is_trialuser && package==='fiveDays'){
             console.log('return');
             return null;
         }else{
             var query = `UPDATE ${table} SET is_trialuser=? WHERE username=?`
-            var [rows, fields] = await connection.query(query,[false,username]);
+            var [rows, fields] = await conn.query(query,[false,username]);
         }       
 };
 

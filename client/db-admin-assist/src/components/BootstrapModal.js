@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 function BootstrapModal(props) {
-  console.log("database is:", props.database);
   let history = useHistory();
   const header = getHeader();
   const classes = useStyles();
@@ -143,6 +142,8 @@ function BootstrapModal(props) {
         logout();
       }
     }).finally(() => {
+      setRemarks('');
+      setpaymentMethod('');
       setSubmitting(false);
       closeModal();
     });

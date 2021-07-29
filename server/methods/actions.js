@@ -352,7 +352,7 @@ const functions = {
                 "success": false,
                 "msg": "Insufficient Data in Payload"
             });
-        }else if(package==="fiveDays"&&remarks===""){
+        }else if(package==="fiveDays" && remarks===""){
             return res.json({
                 "success": false,
                 "msg": "Please provide reason for awarding 5 days trial"
@@ -439,14 +439,16 @@ const isEmpty = (value) => {
 
  const updateStateOfTrialUser = async (table, package,username)=>{
         var conn = await mysql.createConnection(config.xserverdb_config);
-        var selectQuery= `SELECT * FROM ${table} WHERE username=?`
+        var selectQuery= `SELECT * FROM xserverdb.${table} WHERE username=?`
         var [rows,fields] = await conn.query(selectQuery, [username]);
-        if(rows[0].is_trialuser && package==='fiveDays'){
+        if(rows[0].is_trialuser===1 && package==='fiveDays'){
             console.log('return');
             return null;
         }else{
-            var query = `UPDATE ${table} SET is_trialuser=? WHERE username=?`
-            var [rows, fields] = await conn.query(query,[false,username]);
+            console.log('is_trialuser should be 0');
+            var query = `UPDATE xserverdb.${table} SET is_trialuser=? WHERE username=?`
+            var [rows, fields] = await conn.query(query,[0,username]);
+
         }       
 };
 

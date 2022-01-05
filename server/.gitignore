@@ -2,9 +2,9 @@
 
 /node_modules
 /package_lock.json
-/config
-/config/config.js
-.env
+# /config
+# /config/config.js
+# .env
 
 # dependencies
 /node_modules
